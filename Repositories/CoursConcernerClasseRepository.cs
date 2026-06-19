@@ -30,13 +30,10 @@ namespace api_gestion_ecole.Repositories
             return coursConcernerClasse;
         }
 
-        public async Task<CoursConcernerClasse?> DeleteAsync(int CoursId, int ClasseId, int AnneeScolaireId)
+        public async Task<CoursConcernerClasse?> DeleteAsync(int id)
         {
            var coursConcernerClasseExist = await _dbContext.CoursConcernerClasse
-                                                    .FirstOrDefaultAsync(i=> 
-                                                    i.ClasseId == ClasseId &&
-                                                    i.CoursId == CoursId &&
-                                                    i.AnneeScolaireId == AnneeScolaireId);
+                                                    .FirstOrDefaultAsync(i=> i.Id == id);
             if(coursConcernerClasseExist == null) return null;
             _dbContext.CoursConcernerClasse.Remove(coursConcernerClasseExist);
             await _dbContext.SaveChangesAsync();
@@ -52,17 +49,13 @@ namespace api_gestion_ecole.Repositories
                             .ToListAsync();
         }
 
-        public async Task<CoursConcernerClasse?> GetByIdAsync(int CoursId, int ClasseId, int AnneeScolaireId)
+        public async Task<CoursConcernerClasse?> GetByIdAsync(int id)
         {
             return await _dbContext.CoursConcernerClasse
                             .Include(c=>c.Cours)
                             .Include(c=>c.Classe).ThenInclude(c=>c!.Option)
                             .Include(c=>c.AnneeScolaire)
-                            .FirstOrDefaultAsync(i=> 
-                                i.ClasseId == ClasseId &&
-                                i.CoursId == CoursId && 
-                                i.AnneeScolaireId == AnneeScolaireId
-                                );
+                            .FirstOrDefaultAsync(i=>i.Id == id);
         }
 
         public async Task<bool> IsClasseExistAsync(int id)
@@ -84,15 +77,11 @@ namespace api_gestion_ecole.Repositories
                 return true;
             return false;
         }
-        public async Task<CoursConcernerClasse?> UpdateAsync(int CoursId, int ClasseId, int AnneeScolaireId, UpdateCoursConcernerClasseDto updateCoursConcernerClasseDto)
+        public async Task<CoursConcernerClasse?> UpdateAsync(int id, UpdateCoursConcernerClasseDto updateCoursConcernerClasseDto)
         {
             var coursConcernerClasseExist = await _dbContext.CoursConcernerClasse
-                                                    .FirstOrDefaultAsync(i=> 
-                                                    i.ClasseId == ClasseId &&
-                                                    i.CoursId == CoursId &&
-                                                    i.AnneeScolaireId == AnneeScolaireId
-                                                    );
-            
+                                                    .FirstOrDefaultAsync(i=> i.Id == id);
+                                                     
             if(coursConcernerClasseExist == null) return null;
             coursConcernerClasseExist.Max = updateCoursConcernerClasseDto.Max;
             await _dbContext.SaveChangesAsync();

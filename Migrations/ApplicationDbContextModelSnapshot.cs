@@ -288,26 +288,35 @@ namespace api_gestion_ecole.Migrations
 
             modelBuilder.Entity("api_gestion_ecole.Models.Cotation", b =>
                 {
-                    b.Property<int>("InscriptionId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    b.Property<int>("CoursId")
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("Cote")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("CoursConcernerClasseId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("DateCotation")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("InscriptionId")
                         .HasColumnType("integer");
 
                     b.Property<int>("PeriodeId")
                         .HasColumnType("integer");
 
-                    b.Property<double>("Cote")
-                        .HasColumnType("double precision");
+                    b.HasKey("Id");
 
-                    b.Property<DateTime>("DateCotation")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("InscriptionId", "CoursId", "PeriodeId");
-
-                    b.HasIndex("CoursId");
+                    b.HasIndex("CoursConcernerClasseId");
 
                     b.HasIndex("PeriodeId");
+
+                    b.HasIndex("InscriptionId", "CoursConcernerClasseId", "PeriodeId")
+                        .IsUnique();
 
                     b.ToTable("Cotation");
                 });
@@ -334,23 +343,32 @@ namespace api_gestion_ecole.Migrations
 
             modelBuilder.Entity("api_gestion_ecole.Models.CoursConcernerClasse", b =>
                 {
-                    b.Property<int>("CoursId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AnneeScolaireId")
                         .HasColumnType("integer");
 
                     b.Property<int>("ClasseId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("AnneeScolaireId")
+                    b.Property<int>("CoursId")
                         .HasColumnType("integer");
 
                     b.Property<int>("Max")
                         .HasColumnType("integer");
 
-                    b.HasKey("CoursId", "ClasseId", "AnneeScolaireId");
+                    b.HasKey("Id");
 
                     b.HasIndex("AnneeScolaireId");
 
                     b.HasIndex("ClasseId");
+
+                    b.HasIndex("CoursId", "ClasseId", "AnneeScolaireId")
+                        .IsUnique();
 
                     b.ToTable("CoursConcernerClasse");
                 });
@@ -431,23 +449,32 @@ namespace api_gestion_ecole.Migrations
 
             modelBuilder.Entity("api_gestion_ecole.Models.FraisConcernerClasse", b =>
                 {
-                    b.Property<int>("FraisId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AnneeScolaireId")
                         .HasColumnType("integer");
 
                     b.Property<int>("ClasseId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("AnneeScolaireId")
+                    b.Property<int>("FraisId")
                         .HasColumnType("integer");
 
                     b.Property<decimal>("Montant")
                         .HasColumnType("numeric");
 
-                    b.HasKey("FraisId", "ClasseId", "AnneeScolaireId");
+                    b.HasKey("Id");
 
                     b.HasIndex("AnneeScolaireId");
 
                     b.HasIndex("ClasseId");
+
+                    b.HasIndex("FraisId", "ClasseId", "AnneeScolaireId")
+                        .IsUnique();
 
                     b.ToTable("FraisConcernerClasse");
                 });
@@ -515,7 +542,7 @@ namespace api_gestion_ecole.Migrations
                     b.Property<DateTime>("DatePaiement")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("FraisId")
+                    b.Property<int>("FraisConcernerClasseId")
                         .HasColumnType("integer");
 
                     b.Property<int>("InscriptionId")
@@ -526,7 +553,7 @@ namespace api_gestion_ecole.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FraisId");
+                    b.HasIndex("FraisConcernerClasseId");
 
                     b.HasIndex("InscriptionId");
 
@@ -614,9 +641,9 @@ namespace api_gestion_ecole.Migrations
 
             modelBuilder.Entity("api_gestion_ecole.Models.Cotation", b =>
                 {
-                    b.HasOne("api_gestion_ecole.Models.Cours", "Cours")
+                    b.HasOne("api_gestion_ecole.Models.CoursConcernerClasse", "CoursConcernerClasse")
                         .WithMany("Cotations")
-                        .HasForeignKey("CoursId")
+                        .HasForeignKey("CoursConcernerClasseId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -632,7 +659,7 @@ namespace api_gestion_ecole.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Cours");
+                    b.Navigation("CoursConcernerClasse");
 
                     b.Navigation("Inscription");
 
@@ -733,9 +760,9 @@ namespace api_gestion_ecole.Migrations
 
             modelBuilder.Entity("api_gestion_ecole.Models.Paiement", b =>
                 {
-                    b.HasOne("api_gestion_ecole.Models.Frais", "Frais")
+                    b.HasOne("api_gestion_ecole.Models.FraisConcernerClasse", "FraisConcernerClasse")
                         .WithMany("Paiements")
-                        .HasForeignKey("FraisId")
+                        .HasForeignKey("FraisConcernerClasseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -745,7 +772,7 @@ namespace api_gestion_ecole.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Frais");
+                    b.Navigation("FraisConcernerClasse");
 
                     b.Navigation("Inscription");
                 });
@@ -775,9 +802,12 @@ namespace api_gestion_ecole.Migrations
 
             modelBuilder.Entity("api_gestion_ecole.Models.Cours", b =>
                 {
-                    b.Navigation("Cotations");
-
                     b.Navigation("CoursConcernerClasses");
+                });
+
+            modelBuilder.Entity("api_gestion_ecole.Models.CoursConcernerClasse", b =>
+                {
+                    b.Navigation("Cotations");
                 });
 
             modelBuilder.Entity("api_gestion_ecole.Models.Eleve", b =>
@@ -788,7 +818,10 @@ namespace api_gestion_ecole.Migrations
             modelBuilder.Entity("api_gestion_ecole.Models.Frais", b =>
                 {
                     b.Navigation("FraisConcernerClasses");
+                });
 
+            modelBuilder.Entity("api_gestion_ecole.Models.FraisConcernerClasse", b =>
+                {
                     b.Navigation("Paiements");
                 });
 

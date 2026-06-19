@@ -9,6 +9,7 @@ namespace api_gestion_ecole.Mappers
         {
             return new FraisConcernerClasseDto
             {
+                Id = fraisConcernerClasse.Id,
                 FraisId = fraisConcernerClasse.FraisId,
                 ClasseId = fraisConcernerClasse.ClasseId,
                 AnneeScolaireId = fraisConcernerClasse.AnneeScolaireId,

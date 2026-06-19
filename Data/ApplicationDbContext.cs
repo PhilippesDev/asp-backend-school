@@ -36,10 +36,11 @@ namespace api_gestion_ecole.Data
             builder.Entity<Inscription>().HasOne(i=>i.Classe).WithMany(c=>c.Insciptions).HasForeignKey(i=>i.ClasseId).OnDelete(DeleteBehavior.Restrict);
             builder.Entity<Inscription>().HasOne(i=>i.AnneeScolaire).WithMany(a=>a.Insciptions).HasForeignKey(i=>i.AnneeScolaireId).OnDelete(DeleteBehavior.Restrict);
 
-            builder.Entity<CoursConcernerClasse>().HasKey(c=>new{c.CoursId, c.ClasseId, c.AnneeScolaireId});
+            builder.Entity<CoursConcernerClasse>().HasKey(c=>new{c.Id});
             builder.Entity<CoursConcernerClasse>().HasOne(c=>c.Classe).WithMany(c=>c.CoursConcernerClasses).HasForeignKey(c=>c.ClasseId).OnDelete(DeleteBehavior.Restrict);
             builder.Entity<CoursConcernerClasse>().HasOne(c=>c.Cours).WithMany(c=>c.CoursConcernerClasses).HasForeignKey(c=>c.CoursId).OnDelete(DeleteBehavior.Restrict);
             builder.Entity<CoursConcernerClasse>().HasOne(c=>c.AnneeScolaire).WithMany(a=>a.CoursConcernerClasses).HasForeignKey(c=>c.AnneeScolaireId).OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<CoursConcernerClasse>().HasIndex(c=>new{c.CoursId, c.ClasseId, c.AnneeScolaireId}).IsUnique();
 
             builder.Entity<FraisConcernerClasse>().HasKey(f=>new{f.Id});
             builder.Entity<FraisConcernerClasse>().HasOne(f=>f.Classe).WithMany(c=>c.FraisConcernerClasses).HasForeignKey(f=>f.ClasseId).OnDelete(DeleteBehavior.Restrict);
@@ -47,10 +48,11 @@ namespace api_gestion_ecole.Data
             builder.Entity<FraisConcernerClasse>().HasOne(f=>f.AnneeScolaire).WithMany(a=>a.FraisConcernerClasses).HasForeignKey(f=>f.AnneeScolaireId).OnDelete(DeleteBehavior.Restrict);
             builder.Entity<FraisConcernerClasse>().HasIndex(f=>new{f.FraisId, f.ClasseId, f.AnneeScolaireId}).IsUnique();
 
-            builder.Entity<Cotation>().HasKey(c=>new{c.InscriptionId, c.CoursId, c.PeriodeId});
+            builder.Entity<Cotation>().HasKey(c=>new{c.Id});
             builder.Entity<Cotation>().HasOne(c=>c.Inscription).WithMany(i=>i.Cotations).HasForeignKey(c=>c.InscriptionId).OnDelete(DeleteBehavior.Restrict);
-            builder.Entity<Cotation>().HasOne(c=>c.Cours).WithMany(c=>c.Cotations).HasForeignKey(c=>c.CoursId).OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<Cotation>().HasOne(c=>c.CoursConcernerClasse).WithMany(c=>c.Cotations).HasForeignKey(c=>c.CoursConcernerClasseId).OnDelete(DeleteBehavior.Restrict);
             builder.Entity<Cotation>().HasOne(c=>c.Periode).WithMany(p=>p.Cotations).HasForeignKey(c=>c.PeriodeId).OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<Cotation>().HasIndex(c=>new{c.InscriptionId, c.CoursConcernerClasseId, c.PeriodeId}).IsUnique();
 
             builder.Entity<AnneeScolaire>().HasIndex(a=> new {a.Designation}).IsUnique();
         }

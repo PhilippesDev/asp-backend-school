@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace api_gestion_ecole.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class MigrationInitailBd : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -294,14 +294,16 @@ namespace api_gestion_ecole.Migrations
                 name: "CoursConcernerClasse",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Max = table.Column<int>(type: "integer", nullable: false),
                     CoursId = table.Column<int>(type: "integer", nullable: false),
                     ClasseId = table.Column<int>(type: "integer", nullable: false),
-                    AnneeScolaireId = table.Column<int>(type: "integer", nullable: false),
-                    Max = table.Column<int>(type: "integer", nullable: false)
+                    AnneeScolaireId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CoursConcernerClasse", x => new { x.CoursId, x.ClasseId, x.AnneeScolaireId });
+                    table.PrimaryKey("PK_CoursConcernerClasse", x => x.Id);
                     table.ForeignKey(
                         name: "FK_CoursConcernerClasse_AnneeScolaire_AnneeScolaireId",
                         column: x => x.AnneeScolaireId,
@@ -326,14 +328,16 @@ namespace api_gestion_ecole.Migrations
                 name: "FraisConcernerClasse",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Montant = table.Column<decimal>(type: "numeric", nullable: false),
                     FraisId = table.Column<int>(type: "integer", nullable: false),
                     ClasseId = table.Column<int>(type: "integer", nullable: false),
-                    AnneeScolaireId = table.Column<int>(type: "integer", nullable: false),
-                    Montant = table.Column<decimal>(type: "numeric", nullable: false)
+                    AnneeScolaireId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FraisConcernerClasse", x => new { x.FraisId, x.ClasseId, x.AnneeScolaireId });
+                    table.PrimaryKey("PK_FraisConcernerClasse", x => x.Id);
                     table.ForeignKey(
                         name: "FK_FraisConcernerClasse_AnneeScolaire_AnneeScolaireId",
                         column: x => x.AnneeScolaireId,
@@ -392,19 +396,21 @@ namespace api_gestion_ecole.Migrations
                 name: "Cotation",
                 columns: table => new
                 {
-                    InscriptionId = table.Column<int>(type: "integer", nullable: false),
-                    CoursId = table.Column<int>(type: "integer", nullable: false),
-                    PeriodeId = table.Column<int>(type: "integer", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Cote = table.Column<double>(type: "double precision", nullable: false),
-                    DateCotation = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    DateCotation = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    InscriptionId = table.Column<int>(type: "integer", nullable: false),
+                    CoursConcernerClasseId = table.Column<int>(type: "integer", nullable: false),
+                    PeriodeId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Cotation", x => new { x.InscriptionId, x.CoursId, x.PeriodeId });
+                    table.PrimaryKey("PK_Cotation", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Cotation_Cours_CoursId",
-                        column: x => x.CoursId,
-                        principalTable: "Cours",
+                        name: "FK_Cotation_CoursConcernerClasse_CoursConcernerClasseId",
+                        column: x => x.CoursConcernerClasseId,
+                        principalTable: "CoursConcernerClasse",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -428,7 +434,7 @@ namespace api_gestion_ecole.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     InscriptionId = table.Column<int>(type: "integer", nullable: false),
-                    FraisId = table.Column<int>(type: "integer", nullable: false),
+                    FraisConcernerClasseId = table.Column<int>(type: "integer", nullable: false),
                     Montant = table.Column<decimal>(type: "numeric", nullable: false),
                     DatePaiement = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -436,9 +442,9 @@ namespace api_gestion_ecole.Migrations
                 {
                     table.PrimaryKey("PK_Paiement", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Paiement_Frais_FraisId",
-                        column: x => x.FraisId,
-                        principalTable: "Frais",
+                        name: "FK_Paiement_FraisConcernerClasse_FraisConcernerClasseId",
+                        column: x => x.FraisConcernerClasseId,
+                        principalTable: "FraisConcernerClasse",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -498,9 +504,15 @@ namespace api_gestion_ecole.Migrations
                 column: "OptionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Cotation_CoursId",
+                name: "IX_Cotation_CoursConcernerClasseId",
                 table: "Cotation",
-                column: "CoursId");
+                column: "CoursConcernerClasseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Cotation_InscriptionId_CoursConcernerClasseId_PeriodeId",
+                table: "Cotation",
+                columns: new[] { "InscriptionId", "CoursConcernerClasseId", "PeriodeId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Cotation_PeriodeId",
@@ -518,6 +530,12 @@ namespace api_gestion_ecole.Migrations
                 column: "ClasseId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CoursConcernerClasse_CoursId_ClasseId_AnneeScolaireId",
+                table: "CoursConcernerClasse",
+                columns: new[] { "CoursId", "ClasseId", "AnneeScolaireId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Frais_CategorieFraisId",
                 table: "Frais",
                 column: "CategorieFraisId");
@@ -531,6 +549,12 @@ namespace api_gestion_ecole.Migrations
                 name: "IX_FraisConcernerClasse_ClasseId",
                 table: "FraisConcernerClasse",
                 column: "ClasseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FraisConcernerClasse_FraisId_ClasseId_AnneeScolaireId",
+                table: "FraisConcernerClasse",
+                columns: new[] { "FraisId", "ClasseId", "AnneeScolaireId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Inscription_AnneeScolaireId",
@@ -549,9 +573,9 @@ namespace api_gestion_ecole.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Paiement_FraisId",
+                name: "IX_Paiement_FraisConcernerClasseId",
                 table: "Paiement",
-                column: "FraisId");
+                column: "FraisConcernerClasseId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Paiement_InscriptionId",
@@ -581,12 +605,6 @@ namespace api_gestion_ecole.Migrations
                 name: "Cotation");
 
             migrationBuilder.DropTable(
-                name: "CoursConcernerClasse");
-
-            migrationBuilder.DropTable(
-                name: "FraisConcernerClasse");
-
-            migrationBuilder.DropTable(
                 name: "Paiement");
 
             migrationBuilder.DropTable(
@@ -596,19 +614,22 @@ namespace api_gestion_ecole.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
+                name: "CoursConcernerClasse");
+
+            migrationBuilder.DropTable(
                 name: "Periode");
+
+            migrationBuilder.DropTable(
+                name: "FraisConcernerClasse");
+
+            migrationBuilder.DropTable(
+                name: "Inscription");
 
             migrationBuilder.DropTable(
                 name: "Cours");
 
             migrationBuilder.DropTable(
                 name: "Frais");
-
-            migrationBuilder.DropTable(
-                name: "Inscription");
-
-            migrationBuilder.DropTable(
-                name: "CategorieFrais");
 
             migrationBuilder.DropTable(
                 name: "AnneeScolaire");
@@ -618,6 +639,9 @@ namespace api_gestion_ecole.Migrations
 
             migrationBuilder.DropTable(
                 name: "Eleve");
+
+            migrationBuilder.DropTable(
+                name: "CategorieFrais");
 
             migrationBuilder.DropTable(
                 name: "Option");

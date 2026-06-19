@@ -2,6 +2,7 @@ namespace api_gestion_ecole.Dtos.CoursConcernerClasse
 {
     public class CoursConcernerClasseDto
     {
+        public int Id;
         public int CoursId { get; set; }
         public int ClassId { get; set; }
         public int AnneeScolaireId { get; set; }
