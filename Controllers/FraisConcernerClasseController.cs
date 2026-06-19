@@ -22,10 +22,10 @@ namespace api_gestion_ecole.Controllers
                         c.ToFraisConcernerClasseDto()));
         }
 
-        [HttpGet("{fraisId:int}/{classeId:int}/{anneeScolaireId}")]
-        public async Task<IActionResult> GetById(int fraisId,int classeId, int anneeScolaireId)
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetById(int id)
         {
-            var fraisConcernerClasse = await _repository.GetByIdAsync(fraisId, classeId, anneeScolaireId);
+            var fraisConcernerClasse = await _repository.GetByIdAsync(id);
 
             if (fraisConcernerClasse == null)
                 return NotFound();
@@ -62,14 +62,14 @@ namespace api_gestion_ecole.Controllers
             return StatusCode(201, result.ToFraisConcernerClasseDto());
         }
 
-        [HttpPatch("{fraisId}/{classeId}/{anneeScolaireId}")]
-        public async Task<IActionResult> Patch(int fraisId, int classeId,int anneeScolaireId,
+        [HttpPatch("{id:int}")]
+        public async Task<IActionResult> Patch(int id,
                  [FromBody] UpdateFraisConcernerClasseDto updateFraisConcernerClasseDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var result = await _repository.UpdateAsync(fraisId,classeId, anneeScolaireId,updateFraisConcernerClasseDto);
+            var result = await _repository.UpdateAsync(id,updateFraisConcernerClasseDto);
 
             if (result == null)
                 return NotFound();
@@ -77,10 +77,10 @@ namespace api_gestion_ecole.Controllers
             return Ok(result);
         }
 
-        [HttpDelete("{fraisId}/{classeId}/{anneeScolaireId}")]
-        public async Task<IActionResult> Delete(int fraisId, int classeId, int anneeScolaireId)
+        [HttpDelete("id:int")]
+        public async Task<IActionResult> Delete(int id)
         {
-            var result =await _repository.DeleteAsync(fraisId,classeId, anneeScolaireId);
+            var result =await _repository.DeleteAsync(id);
             if (result == null)
                 return NotFound();
 

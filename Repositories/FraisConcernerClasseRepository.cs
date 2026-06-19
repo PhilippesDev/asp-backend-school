@@ -31,13 +31,11 @@ namespace api_gestion_ecole.Repositories
             return fraisConcernerClasse;
         }
 
-        public async Task<FraisConcernerClasse?> DeleteAsync(int FraisId, int ClasseId, int AnneeScolaireId)
+        public async Task<FraisConcernerClasse?> DeleteAsync(int id)
         {
            var fraisConcernerClasseExist = await _dbContext.FraisConcernerClasses
-                                                    .FirstOrDefaultAsync(i=> 
-                                                    i.ClasseId == ClasseId &&
-                                                    i.FraisId == FraisId &&
-                                                    i.AnneeScolaireId == AnneeScolaireId);
+                                                    .FirstOrDefaultAsync(i=>i.Id == id);
+                                                   
             if(fraisConcernerClasseExist == null) return null;
             _dbContext.FraisConcernerClasses.Remove(fraisConcernerClasseExist);
             await _dbContext.SaveChangesAsync();
@@ -53,16 +51,13 @@ namespace api_gestion_ecole.Repositories
                             .ToListAsync();
         }
 
-        public async Task<FraisConcernerClasse?> GetByIdAsync(int FraisId, int ClasseId, int anneeScolaireId)
+        public async Task<FraisConcernerClasse?> GetByIdAsync(int id)
         {
             return await _dbContext.FraisConcernerClasses
                             .Include(c=>c.Frais)
                             .Include(c=>c.Classe).ThenInclude(c=>c!.Option)
                             .Include(c=>c.AnneeScolaire)
-                            .FirstOrDefaultAsync(i=> 
-                                i.ClasseId == ClasseId &&
-                                i.FraisId == FraisId &&
-                                i.AnneeScolaireId == anneeScolaireId);
+                            .FirstOrDefaultAsync(i=> i.Id == id);
         }
 
         public async Task<bool> IsClasseExistAsync(int id)
@@ -84,18 +79,28 @@ namespace api_gestion_ecole.Repositories
                 return true;
             return false;
         }
-        public async Task<FraisConcernerClasse?> UpdateAsync(int FraisId, int ClasseId, int AnneeScolaireId, UpdateFraisConcernerClasseDto updatefraisConcernerClasseDto)
+        public async Task<FraisConcernerClasse?> UpdateAsync(int id, UpdateFraisConcernerClasseDto updatefraisConcernerClasseDto)
         {
             var fraisConcernerClasseExist = await _dbContext.FraisConcernerClasses
-                                                    .FirstOrDefaultAsync(i=> 
-                                                    i.ClasseId == ClasseId &&
-                                                    i.FraisId == FraisId &&
-                                                    i.AnneeScolaireId == AnneeScolaireId);
+                                                    .FirstOrDefaultAsync(i=> i.Id == id);
             
             if(fraisConcernerClasseExist == null) return null;
             fraisConcernerClasseExist.Montant = updatefraisConcernerClasseDto.Montant;
             await _dbContext.SaveChangesAsync();
             return fraisConcernerClasseExist;
         }
+
+        public async Task<bool> IsFraisConcernerClasseExistAsync(int id, int fraidId, int classeId, int anneeScolaireId)
+        {
+            var fraisConcernerClasse = await _dbContext.FraisConcernerClasses.FirstOrDefaultAsync(
+                f=>f.FraisId == fraidId && f.ClasseId == classeId && f.AnneeScolaireId == anneeScolaireId
+            );
+
+            if(fraisConcernerClasse != null && fraisConcernerClasse.Id != id)
+                return true;
+            return false;
+        }
+
+
     }
 }
