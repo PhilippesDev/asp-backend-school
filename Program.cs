@@ -28,6 +28,7 @@ builder.Services.AddScoped<IInscriptionRepository, InscriptionRepository>();
 builder.Services.AddScoped<ICoursConcernerClasseRepository, CoursConcernerClasseRepository>();
 builder.Services.AddScoped<IFraisConcernerClasseRepository, FraisConcernerClasseRepository>();
 builder.Services.AddScoped<IPaiementRepository, PaiementRepository>();
+builder.Services.AddScoped<ICotationRepository, CotationRepository>();
 
 var app = builder.Build();
 

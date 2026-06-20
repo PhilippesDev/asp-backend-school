@@ -50,7 +50,7 @@ namespace api_gestion_ecole.Repositories
             annee.Designation = updateAnneeScolaireDto.Designation;
             annee.DateDebut = updateAnneeScolaireDto.DateDebut;
             annee.DateFin = updateAnneeScolaireDto.DateFin;
-
+        
             if(updateAnneeScolaireDto.EstActive == true)
             {
                 if(await ActiveAnneeScolaireAsync(id) == null)
@@ -60,9 +60,11 @@ namespace api_gestion_ecole.Repositories
             await _dbContext.SaveChangesAsync();
             return annee;
         }
+        
         public async Task<AnneeScolaire?> ActiveAnneeScolaireAsync(int id)
         {
             var annnes = await _dbContext.AnneeScolaire.Where(a=>a.EstActive).ToListAsync();
+            
             foreach(var an in annnes)
             {
                 an.EstActive = false;

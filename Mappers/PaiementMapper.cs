@@ -14,7 +14,10 @@ namespace api_gestion_ecole.Mappers
                 FraisConcernerClasseId = paiement.FraisConcernerClasseId,
                 Eleve = $"{paiement?.Inscription!.Eleve?.Nom} {paiement?.Inscription!.Eleve?.Postnom} {paiement?.Inscription!.Eleve?.Prenom}",
                 Frais = paiement?.FraisConcernerClasse!.Frais?.Designation,
-                Montant = paiement!.Montant
+                Montant = paiement!.Montant,
+                Classe = paiement?.FraisConcernerClasse?.Classe?.Designation,
+                Option = paiement?.FraisConcernerClasse?.Classe?.Option?.Designation,
+                DatePaiement = paiement!.DatePaiement
             };
         }
 
@@ -22,9 +25,10 @@ namespace api_gestion_ecole.Mappers
         {
             return new Paiement
             {
-                InscriptionId = createPaiementDto.InsciptionId,
+                InscriptionId = createPaiementDto.InscriptionId,
                 FraisConcernerClasseId = createPaiementDto.FraisConcernerClasseId,
-                Montant = createPaiementDto.Montant
+                Montant = createPaiementDto.Montant,
+                DatePaiement = createPaiementDto.DatePaiement
             };
         }
     }

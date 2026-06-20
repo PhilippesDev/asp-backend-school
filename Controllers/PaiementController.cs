@@ -15,7 +15,7 @@ namespace api_gestion_ecole.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetAll()
         {
             return Ok((await _repository.GetAllAsync())
                 .Select(p=>p.ToPaiementDto()));
@@ -33,13 +33,18 @@ namespace api_gestion_ecole.Controllers
             if(!ModelState.IsValid)
                 return BadRequest(ModelState);
             
-            if(!await _repository.IsInscriptionExistAsync(createPaiementDto.InsciptionId))
+            if(!await _repository.IsInscriptionExistAsync(createPaiementDto.InscriptionId))
                 return BadRequest(new {message = "L'élève spécifié n'existe pas"});
 
              if(!await _repository.IsFraisConcernerClasseExistAsync(createPaiementDto.FraisConcernerClasseId))
                 return BadRequest(new {message = "Les frais spécifiés n'existent pas"});
             
             var paiement = await _repository.CreateAsync(createPaiementDto);
+            if(paiement == null)
+                return BadRequest(new {message = "Erreur d'enregistrement de paiement." +
+                                       " Assurez vous que ce frais concerne cet élève"}
+                                        );
+
             return StatusCode(201, paiement?.ToPaiementDto());
         }
         [HttpPatch("{id:int}")]

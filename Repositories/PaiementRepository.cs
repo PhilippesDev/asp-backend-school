@@ -14,12 +14,30 @@ namespace api_gestion_ecole.Repositories
         {
             _dbContext = dbContext;
         }
-         public async Task<Paiement?> CreateAsync(CreatePaiementDto createPaiementDto)
+        public async Task<Paiement?> CreateAsync(CreatePaiementDto createPaiementDto)
         {
+            var inscription = await _dbContext.Inscription
+                                    .Include(i=>i.Classe)
+                                    .Include(i=>i.AnneeScolaire)
+                                .FirstOrDefaultAsync(i=>
+                                i.Id == createPaiementDto.InscriptionId);
+            var fraisConcernerClasse = await _dbContext.FraisConcernerClasses
+                                        .Include(f=>f.Classe)
+                                        .Include(f=>f.AnneeScolaire)
+                                    .FirstOrDefaultAsync(f=>
+                                    f.Id == createPaiementDto.FraisConcernerClasseId);
+
+            if(inscription == null || fraisConcernerClasse == null)
+                    return null;
+            
+            if((inscription.Classe != fraisConcernerClasse!.Classe) || 
+                (inscription.AnneeScolaire != fraisConcernerClasse.AnneeScolaire))
+                    return null;
+
             var paiement = createPaiementDto.ToPaiementFromCreate(); 
             await _dbContext.Paiement.AddAsync(paiement);
             await _dbContext.SaveChangesAsync();
-            return paiement ?? null;
+            return paiement;
         }
 
         public async Task<Paiement?> DeleteAsync(int id)
@@ -37,6 +55,7 @@ namespace api_gestion_ecole.Repositories
             return await _dbContext.Paiement
                         .Include(p=>p.Inscription).ThenInclude(i=>i!.Eleve)
                         .Include(p=>p.FraisConcernerClasse).ThenInclude(f=>f!.Frais)
+                        .Include(p=>p.FraisConcernerClasse).ThenInclude(f=>f!.Classe).ThenInclude(c=>c!.Option)
                         .ToListAsync();
         }
 
@@ -50,7 +69,12 @@ namespace api_gestion_ecole.Repositories
 
         public async Task<Paiement?> UpdateAsync(int id, UpdatePaiementDto updatePaiementDto)
         {
-            var paiement = await _dbContext.Paiement.FirstOrDefaultAsync(p=>p.Id == id);
+            var paiement = await _dbContext.Paiement
+                                .Include(p=>p.Inscription)
+                                    .ThenInclude(i=>i!.Eleve)
+                                .Include(p=>p.FraisConcernerClasse).ThenInclude(f=>f!.Frais)
+                            .FirstOrDefaultAsync(p=>p.Id == id);
+
             if(paiement == null) return null;
 
             paiement.Montant = updatePaiementDto.Montant;

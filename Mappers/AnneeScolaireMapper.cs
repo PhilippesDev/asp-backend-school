@@ -22,7 +22,8 @@ namespace api_gestion_ecole.Mappers
                 Id = anneeScolaire.Id,
                 Designation = anneeScolaire.Designation,
                 DateDebut = anneeScolaire.DateDebut,
-                DateFin = anneeScolaire.DateFin
+                DateFin = anneeScolaire.DateFin,
+                EstActive = anneeScolaire.EstActive
             };
         }
     }

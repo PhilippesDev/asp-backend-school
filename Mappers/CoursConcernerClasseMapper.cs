@@ -9,6 +9,7 @@ namespace api_gestion_ecole.Mappers
         {
             return new CoursConcernerClasseDto
             {
+                Id = coursConcernerClasse.Id,
                 CoursId = coursConcernerClasse.CoursId,
                 ClassId = coursConcernerClasse.ClasseId,
                 AnneeScolaireId = coursConcernerClasse.AnneeScolaireId,
