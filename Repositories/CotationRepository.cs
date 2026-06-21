@@ -48,7 +48,7 @@ namespace api_gestion_ecole.Repositories
             await _dbContext.SaveChangesAsync();
             return cotation;
         }
-
+        
         public async Task<List<Cotation>> GetAllAsync()
         {
             return await _dbContext.Cotation

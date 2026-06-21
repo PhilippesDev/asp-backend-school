@@ -11,11 +11,13 @@ namespace api_gestion_ecole.Mappers
         {
             return new Classe {Designation = createClasseDto.Designation, OptionId = createClasseDto.OptionId};
         }
+
         public static ClasseDto ToClasseDto(this Classe classe)
         {
             return new ClasseDto
             {
                 Id = classe.Id,
+                OptionId = classe.OptionId,
                 Designation = classe.Designation,
                 Option = classe?.Option?.Designation
             };
