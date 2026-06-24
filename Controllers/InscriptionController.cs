@@ -17,9 +17,9 @@ namespace api_gestion_ecole.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get(QueryObject queryObject)
+        public async Task<IActionResult> Get()
         {
-            return Ok((await _inscriptionRepository.GetAllAsync(queryObject))
+            return Ok((await _inscriptionRepository.GetAllAsync())
                         .Select(i=>i.ToInscriptionDto()));
         }
 

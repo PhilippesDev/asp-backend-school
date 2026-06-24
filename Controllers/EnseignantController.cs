@@ -25,10 +25,10 @@ namespace api_gestion_ecole.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get(QueryObjectForPeople queryObject)
+        public async Task<IActionResult> Get()
         {
             if(!ModelState.IsValid) return BadRequest(ModelState);
-            return Ok((await _enseignantRepository.GetAllAsync(queryObject)).Select(e=>e.ToEnseignantDto()));
+            return Ok((await _enseignantRepository.GetAllAsync()).Select(e=>e.ToEnseignantDto()));
         }
 
 

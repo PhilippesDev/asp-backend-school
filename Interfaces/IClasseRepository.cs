@@ -8,7 +8,7 @@ namespace api_gestion_ecole.Interfaces
 {
     public interface IClasseRepository
     {
-        public Task<List<Classe>> GetAllAsync(QueryObject queryObject);
+        public Task<List<Classe>> GetAllAsync();
         public Task<Classe?> GetByIdAsync(int id);
         public Task<Classe?> CreateAsync(CreateClasseDto  createClasseDto);
         public Task<Classe?> UpdateAsync(int id, UpdateClasseDto updateClasseDto);

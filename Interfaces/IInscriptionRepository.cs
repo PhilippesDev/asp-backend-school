@@ -6,7 +6,7 @@ namespace api_gestion_ecole.Interfaces
 {
     public interface IInscriptionRepository
     {
-        public Task<List<Inscription>> GetAllAsync(QueryObject queryObject);
+        public Task<List<Inscription>> GetAllAsync();
         public Task<Inscription?> GetByIdAsync(int id);
         public Task<Inscription?> CreateAsync(CreateInscriptionDto createOptionDto);
         public Task<Inscription?> UpdateAsync(int inscriptionId,UpdateInscriptionDto updateInscriptionDto);

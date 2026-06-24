@@ -31,25 +31,9 @@ namespace api_gestion_ecole.Repositories
             return frais;
         }
 
-        public async Task<List<Frais>> GetAllAsync(QueryObject queryObject)
+        public async Task<List<Frais>> GetAllAsync()
         {
-            var frais = _dbContext.Frais.Include(f=>f.CategorieFrais).AsQueryable();
-
-        
-            if(!string.IsNullOrEmpty(queryObject.Designation))
-                frais = frais.Where(c=>
-                    c.Designation!.ToLower()
-                        .Contains(queryObject.Designation.ToLower()) 
-                     );
-            
-            if(queryObject.IsDescending == true) 
-                frais = frais.OrderByDescending(c=>c.Id);
-
-            int skip = (queryObject.Page - 1) * queryObject.PageSize; 
-           
-            frais = frais.Skip(skip).Take(queryObject.PageSize);
-
-            return await frais.ToListAsync();
+            return await _dbContext.Frais.Include(f=>f.CategorieFrais).ToListAsync();
         }
 
         public async Task<Frais?> GetByIdAsync(int id)

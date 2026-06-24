@@ -34,27 +34,7 @@ namespace api_gestion_ecole.Repositories
 
         public async Task<List<Eleve>> GetAllAsync()
         {
-            // var eleves = _dbContext.Eleve
             return await _dbContext.Eleve.ToListAsync();
-        
-            /* if(!string.IsNullOrEmpty(queryObject.Noms))
-                eleves = eleves.Where(c=>
-                    c.Nom!.ToLower()
-                        .Contains(queryObject.Noms.ToLower()) || 
-                     c.Postnom!.ToLower()
-                        .Contains(queryObject.Noms.ToLower()) ||
-                    c.Prenom!.ToLower()
-                        .Contains(queryObject.Noms.ToLower())
-                     );
-            
-            if(queryObject.IsDescending == true) 
-                eleves = eleves.OrderByDescending(c=>c.Id); */
-
-            /* int skip = (queryObject.Page - 1) * queryObject.PageSize; 
-           
-            eleves = eleves.Skip(skip).Take(queryObject.PageSize); */
-
-            // return await eleves.ToListAsync();
         }
 
         public async Task<Eleve?> GetByIdAsync(int id)

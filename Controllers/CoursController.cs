@@ -16,11 +16,11 @@ namespace api_gestion_ecole.Controllers
             _coursRepository = coursRepository;
         }
         [HttpGet]
-        public async Task<IActionResult> Get(QueryObject queryObject)
+        public async Task<IActionResult> Get()
         {
             if(!ModelState.IsValid) return BadRequest(ModelState);
 
-            return Ok((await _coursRepository.GetAllAsync(queryObject)).Select(c=>c.ToCoursDto()));
+            return Ok((await _coursRepository.GetAllAsync()).Select(c=>c.ToCoursDto()));
         }
 
         [HttpGet("{id:int}")]
