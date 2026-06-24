@@ -32,22 +32,9 @@ namespace api_gestion_ecole.Repositories
             return classe;
         }
 
-        public async Task<List<Classe>> GetAllAsync(QueryObject queryObject)
+        public async Task<List<Classe>> GetAllAsync()
         {
-            var classe = _dbContext.Classe.Include(c=>c.Option).AsQueryable();
-
-            if(!string.IsNullOrEmpty(queryObject.Designation))
-                classe = classe.Where(c=>c.Designation.ToLower()
-                    .Contains(queryObject.Designation.ToLower()));
-            
-            if(queryObject.IsDescending == true) 
-                classe = classe.OrderByDescending(c=>c.Id);
-
-            int skip = (queryObject.Page - 1) * queryObject.PageSize; 
-           
-            classe = classe.Skip(skip).Take(queryObject.PageSize);
-            
-            return await classe.ToListAsync();
+            return await _dbContext.Classe.Include(c=>c.Option).ToListAsync();
         }
 
         public async Task<Classe?> GetByIdAsync(int id)

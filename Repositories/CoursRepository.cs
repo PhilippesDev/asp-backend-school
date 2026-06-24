@@ -32,26 +32,9 @@ namespace api_gestion_ecole.Repositories
             return option;
         }
 
-        public async Task<List<Cours>> GetAllAsync(QueryObject queryObject)
+        public async Task<List<Cours>> GetAllAsync()
         {
-            var cours = _dbContext.Cours.AsQueryable();
-
-            if(!string.IsNullOrEmpty(queryObject.Designation))
-                cours = cours.Where(c=>
-                    c.Designation!.ToLower()
-                        .Contains(queryObject.Designation.ToLower()) || 
-                     c.Abreviation!.ToLower()
-                        .Contains(queryObject.Designation.ToLower())
-                     );
-            
-            if(queryObject.IsDescending == true) 
-                cours = cours.OrderByDescending(c=>c.Id);
-
-            int skip = (queryObject.Page - 1) * queryObject.PageSize; 
-           
-            cours = cours.Skip(skip).Take(queryObject.PageSize);
-
-            return await cours.ToListAsync();
+            return await  _dbContext.Cours.ToListAsync();
         }
 
         public async Task<Cours?> GetByIdAsync(int id)

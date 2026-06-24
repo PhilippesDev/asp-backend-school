@@ -22,35 +22,12 @@ namespace api_gestion_ecole.Repositories
             return createInscriptionDto.ToInscriptionFromCreate();
         }
 
-        public async Task<List<Inscription>> GetAllAsync(QueryObject queryObject)
+        public async Task<List<Inscription>> GetAllAsync()
         {
-            var inscription = _dbContext.Inscription
+            return await _dbContext.Inscription
                     .Include(i=>i.Eleve)
                     .Include(i=>i.AnneeScolaire)
-                    .Include(i=>i.Classe).ThenInclude(c=>c!.Option).AsQueryable();
-           
-            if(!string.IsNullOrEmpty(queryObject.Designation))
-                inscription = inscription.Where(c=>
-                    c.Classe!.Designation!.ToLower()
-                        .Contains(queryObject.Designation.ToLower()) || 
-                         c.Eleve!.Nom.ToLower()
-                        .Contains(queryObject.Designation.ToLower()) ||
-                          c.Eleve!.Postnom.ToLower()
-                        .Contains(queryObject.Designation.ToLower()) ||
-                          c.Eleve!.Prenom.ToLower()
-                        .Contains(queryObject.Designation.ToLower()) ||
-                         c.Classe.Option.Designation.ToLower()
-                        .Contains(queryObject.Designation.ToLower())
-                     );
-            
-            if(queryObject.IsDescending == true) 
-                inscription = inscription.OrderByDescending(c=>c.Id);
-
-            int skip = (queryObject.Page - 1) * queryObject.PageSize; 
-           
-            inscription = inscription.Skip(skip).Take(queryObject.PageSize);
-
-            return await inscription.ToListAsync();
+                    .Include(i=>i.Classe).ThenInclude(c=>c!.Option).ToListAsync();
         }
 
         public async Task<Inscription?> GetByIdAsync(int id)

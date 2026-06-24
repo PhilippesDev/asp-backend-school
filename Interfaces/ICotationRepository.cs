@@ -6,7 +6,7 @@ namespace api_gestion_ecole.Interfaces
 {
     public interface ICotationRepository
     {
-        public Task<List<Cotation>> GetAllAsync(QueryObject queryObject);
+        public Task<List<Cotation>> GetAllAsync();
         public Task<Cotation?> GetByIdAsync(int id);
         public Task<Cotation?> CreateAsync(CreateCotationDto createCotationDto);
         public Task<Cotation?> UpdateAsync(int id, UpdateCotationDto updateCotationDto);
