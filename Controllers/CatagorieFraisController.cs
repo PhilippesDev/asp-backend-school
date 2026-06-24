@@ -60,5 +60,23 @@ namespace api_gestion_ecole.Controllers
             if(categorieFrais == null) return NotFound(new {message = "Categorie frais introuvable"});
             return NoContent();
         }
+
+        [HttpGet("nombre")]
+        public async Task<IActionResult> GetNombreCategories()
+        {
+            var nombre = await _categorieFraisRepository.GetNombreCategoriesAsync();
+            return Ok(new { nombre });
+        }
+
+        [HttpGet("{id:int}/nombre-frais")]
+        public async Task<IActionResult> GetNombreFrais(int id)
+        {
+            var nombre = await _categorieFraisRepository.GetNombreFraisAsync(id);
+
+            if (nombre == null)
+                return NotFound(new { message = "Catégorie de frais introuvable" });
+
+            return Ok(new { nombre });
+        }
     }
 }

@@ -13,8 +13,8 @@ namespace api_gestion_ecole.Models
         public Classe? Classe { get; set; }
         public int AnneeScolaireId { get; set; }
         public AnneeScolaire? AnneeScolaire {get; set;}
-        
         public IEnumerable<Paiement>? Paiements { get; set; }
         public IEnumerable<Cotation>? Cotations { get; set; }
+        public IEnumerable<Presence>? Presences { get; set; }
     }
 }

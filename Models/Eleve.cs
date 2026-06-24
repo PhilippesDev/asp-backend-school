@@ -9,11 +9,14 @@ namespace api_gestion_ecole.Models
         public string Sexe { get; set; } = string.Empty;
         public DateOnly? DateNaissance { get; set; }
         public string? LieuNaissance { get; set; } = string.Empty;
+        public string Adresse { get; set; } = string.Empty;
         public string NomsPere { get; set; } = string.Empty;
         public string NomsMere { get; set; } = string.Empty;
         public string? NumPere { get; set; }  = string.Empty;
         public string? NumMere { get; set; } = string.Empty;
         public string? Photo { get; set; } = string.Empty;
+        public int? ParentId {get; set;}
+        public Parent? Parent { get; set; }
         public IEnumerable<Inscription>? Insciptions { get; set; }
     }
 }

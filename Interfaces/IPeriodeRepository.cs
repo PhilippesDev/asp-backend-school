@@ -10,5 +10,8 @@ namespace api_gestion_ecole.Interfaces
         public Task<Periode?> CreateAsync(CreatePeriodeDto createPeriodeDto);
         public Task<Periode?> UpdateAsync(int id, UpdatePeriodeDto updatePeriodeDto);
         public Task<Periode?> DeleteAsync(int id);
+        public Task<int> GetNombrePeriodesAsync();
+        public Task<int?> GetNombreCotationsAsync(int periodeId);
+        public Task<bool> IsSemestreExistAsync(int id);
     }
 }

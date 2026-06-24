@@ -46,6 +46,7 @@ namespace api_gestion_ecole.Repositories
                             .Include(c=>c.Cours)
                             .Include(c=>c.Classe).ThenInclude(c=>c!.Option)
                             .Include(c=>c.AnneeScolaire)
+                            .Include(c=>c.Enseignant)
                             .ToListAsync();
         }
 
@@ -54,6 +55,7 @@ namespace api_gestion_ecole.Repositories
             return await _dbContext.CoursConcernerClasse
                             .Include(c=>c.Cours)
                             .Include(c=>c.Classe).ThenInclude(c=>c!.Option)
+                            .Include(c=>c.Enseignant)
                             .Include(c=>c.AnneeScolaire)
                             .FirstOrDefaultAsync(i=>i.Id == id);
         }
@@ -70,6 +72,11 @@ namespace api_gestion_ecole.Repositories
             var cours = await _dbContext.Cours.FirstOrDefaultAsync(i=>i.Id == id);
             return cours != null;
         }
+        public async Task<bool> IsEnseignantExistAsync(int id)
+        {
+            var enseignant = await _dbContext.Enseignant.FirstOrDefaultAsync(e=>e.Id == id);
+            return enseignant != null;
+        }
         public async Task<bool> IsAnneeScolaireExistAsync(int id)
         {
             var annee_scolaire = await _dbContext.AnneeScolaire.FirstOrDefaultAsync(a=>a.Id == id);
@@ -83,10 +90,11 @@ namespace api_gestion_ecole.Repositories
                                                     .FirstOrDefaultAsync(i=> i.Id == id);
                                                      
             if(coursConcernerClasseExist == null) return null;
+            coursConcernerClasseExist.EnseignantId = updateCoursConcernerClasseDto.EnseignantId;
             coursConcernerClasseExist.Max = updateCoursConcernerClasseDto.Max;
+            coursConcernerClasseExist.NombreHeures = updateCoursConcernerClasseDto.NombreHeures;
             await _dbContext.SaveChangesAsync();
             return coursConcernerClasseExist;
         }
-
     }
 }

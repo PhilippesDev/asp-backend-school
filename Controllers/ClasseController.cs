@@ -166,5 +166,71 @@ namespace api_gestion_ecole.Controllers
 
             return Ok(classes);
         }
+
+        [HttpGet("{classeId:int}/cours")]
+        public async Task<IActionResult> GetCoursInClasse(int classeId)
+        {
+            var cours = await _classeRepository.GetCoursInClasseAsync(classeId, string.Empty);
+
+            if (cours == null)
+                return NotFound(new { message = "La classe ou l'année scolaire spécifiée est introuvable" });
+
+            return Ok(cours.Select(c => c.ToCoursConcernerClasseDto()));
+        }
+
+        [HttpGet("{classeId:int}/cours/{anneeScolaireDesignation}")]
+        public async Task<IActionResult> GetCoursInClasse(int classeId, string anneeScolaireDesignation)
+        {
+            var cours = await _classeRepository.GetCoursInClasseAsync(classeId, anneeScolaireDesignation);
+
+            if (cours == null)
+                return NotFound(new { message = "La classe ou l'année scolaire spécifiée est introuvable" });
+
+            return Ok(cours.Select(c => c.ToCoursConcernerClasseDto()));
+        }
+
+        [HttpGet("{classeId:int}/frais")]
+        public async Task<IActionResult> GetFraisInClasse(int classeId)
+        {
+            var frais = await _classeRepository.GetFraisInClasseAsync(classeId, string.Empty);
+
+            if (frais == null)
+                return NotFound(new { message = "La classe ou l'année scolaire spécifiée est introuvable" });
+
+            return Ok(frais.Select(f => f.ToFraisConcernerClasseDto()));
+        }
+
+        [HttpGet("{classeId:int}/frais/{anneeScolaireDesignation}")]
+        public async Task<IActionResult> GetFraisInClasse(int classeId, string anneeScolaireDesignation)
+        {
+            var frais = await _classeRepository.GetFraisInClasseAsync(classeId, anneeScolaireDesignation);
+
+            if (frais == null)
+                return NotFound(new { message = "La classe ou l'année scolaire spécifiée est introuvable" });
+
+            return Ok(frais.Select(f => f.ToFraisConcernerClasseDto()));
+        }
+
+        [HttpGet("classes-montants-frais")]
+        public async Task<IActionResult> GetClasseWithMontantFrais([FromQuery] QueryObject queryObject)
+        {
+            var classes = await _classeRepository.GetMontantFraisParClasseAsync(string.Empty, queryObject);
+
+            if (classes == null)
+                return NotFound(new { message = "Aucune année scolaire est active, veillez activé ou spécifié une année scolaire" });
+
+            return Ok(classes);
+        }
+
+        [HttpGet("classes-montants-frais/{anneeScolaireDesignation}")]
+        public async Task<IActionResult> GetClasseWithMontantFrais(string anneeScolaireDesignation, [FromQuery] QueryObject queryObject)
+        {
+            var classes = await _classeRepository.GetMontantFraisParClasseAsync(anneeScolaireDesignation, queryObject);
+
+            if (classes == null)
+                return NotFound(new { message = "L'année scolaire spécifiée est introuvable" });
+
+            return Ok(classes);
+        }
     }
 }

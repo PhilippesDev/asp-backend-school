@@ -6,6 +6,7 @@ namespace api_gestion_ecole.Models
         public string Designation { get; set; } = string.Empty;
         public DateOnly DateDebut {get; set;}
         public DateOnly DateFin {get; set;}
+        public string? Couleur { get; set; }
         public bool EstActive { get; set; }
         public IEnumerable<Inscription>? Insciptions { get; set; }
         public IEnumerable<CoursConcernerClasse>? CoursConcernerClasses { get; set; }

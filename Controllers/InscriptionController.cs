@@ -1,4 +1,5 @@
 using api_gestion_ecole.Dtos.Insciption;
+using api_gestion_ecole.Helpers;
 using api_gestion_ecole.Interfaces;
 using api_gestion_ecole.Mappers;
 using Microsoft.AspNetCore.Mvc;
@@ -16,9 +17,9 @@ namespace api_gestion_ecole.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(QueryObject queryObject)
         {
-            return Ok((await _inscriptionRepository.GetAllAsync())
+            return Ok((await _inscriptionRepository.GetAllAsync(queryObject))
                         .Select(i=>i.ToInscriptionDto()));
         }
 
@@ -77,6 +78,28 @@ namespace api_gestion_ecole.Controllers
                 return BadRequest(new {message = "Inscription introuvable"});
             
             return NoContent();
+        }
+
+        [HttpGet("nombre")]
+        public async Task<IActionResult> GetNombreInscriptions()
+        {
+            var nombre = await _inscriptionRepository.GetNombreInscriptionsAsync(string.Empty);
+
+            if (nombre == null)
+                return NotFound(new { message = "Aucune année scolaire active" });
+
+            return Ok(new { nombre });
+        }
+
+        [HttpGet("nombre/{anneeScolaireDesignation}")]
+        public async Task<IActionResult> GetNombreInscriptions(string anneeScolaireDesignation)
+        {
+            var nombre = await _inscriptionRepository.GetNombreInscriptionsAsync(anneeScolaireDesignation);
+
+            if (nombre == null)
+                return NotFound(new { message = "L'année scolaire spécifiée est introuvable" });
+
+            return Ok(new { nombre });
         }
     }
 }

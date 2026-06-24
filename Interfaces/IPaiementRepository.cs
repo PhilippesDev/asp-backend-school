@@ -12,6 +12,9 @@ namespace api_gestion_ecole.Interfaces
         public Task<Paiement?> DeleteAsync(int id);
         public Task<bool> IsInscriptionExistAsync(int id);
         public Task<bool> IsFraisConcernerClasseExistAsync(int id);
-        // public Task<bool> IsAnneeScolaireExistAsync(int id);
+        public Task<decimal?> GetMontantTotalPayeAsync(string anneeScolaireDesignation);
+        public Task<decimal?> GetMontantPayeByInscriptionAsync(int inscriptionId);
+        public Task<int?> GetNombrePaiementsAsync(string anneeScolaireDesignation);
+        public Task<decimal?> GetMontantRestantAsync(int inscriptionId);
     }
 }

@@ -9,7 +9,9 @@ namespace api_gestion_ecole.Mappers
         {
             return new Periode
             {
-                Designation = createPeriodeDto.Designation
+                SemestreId = createPeriodeDto.SemestreId,
+                Designation = createPeriodeDto.Designation,
+                Coefficient = createPeriodeDto.Coefficient
             };
         }
         public static PeriodeDto ToPeriodeDto(this Periode periode)
@@ -17,7 +19,10 @@ namespace api_gestion_ecole.Mappers
             return new PeriodeDto
             {
                 Id = periode.Id,
-                Designation = periode.Designation  
+                SemestreId = periode.SemestreId,
+                Designation = periode.Designation,
+                Semestre = periode.Semestre?.Designation ?? string.Empty,
+                Coefficient = periode.Coefficient
             };
         }
     }

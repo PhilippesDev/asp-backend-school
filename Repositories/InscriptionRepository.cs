@@ -1,5 +1,6 @@
 using api_gestion_ecole.Data;
 using api_gestion_ecole.Dtos.Insciption;
+using api_gestion_ecole.Helpers;
 using api_gestion_ecole.Interfaces;
 using api_gestion_ecole.Mappers;
 using api_gestion_ecole.Models;
@@ -21,12 +22,34 @@ namespace api_gestion_ecole.Repositories
             return createInscriptionDto.ToInscriptionFromCreate();
         }
 
-        public async Task<List<Inscription>> GetAllAsync()
+        public async Task<List<Inscription>> GetAllAsync(QueryObject queryObject)
         {
             var inscription = _dbContext.Inscription
                     .Include(i=>i.Eleve)
                     .Include(i=>i.AnneeScolaire)
-                    .Include(i=>i.Classe).ThenInclude(c=>c!.Option);
+                    .Include(i=>i.Classe).ThenInclude(c=>c!.Option).AsQueryable();
+           
+            if(!string.IsNullOrEmpty(queryObject.Designation))
+                inscription = inscription.Where(c=>
+                    c.Classe!.Designation!.ToLower()
+                        .Contains(queryObject.Designation.ToLower()) || 
+                         c.Eleve!.Nom.ToLower()
+                        .Contains(queryObject.Designation.ToLower()) ||
+                          c.Eleve!.Postnom.ToLower()
+                        .Contains(queryObject.Designation.ToLower()) ||
+                          c.Eleve!.Prenom.ToLower()
+                        .Contains(queryObject.Designation.ToLower()) ||
+                         c.Classe.Option.Designation.ToLower()
+                        .Contains(queryObject.Designation.ToLower())
+                     );
+            
+            if(queryObject.IsDescending == true) 
+                inscription = inscription.OrderByDescending(c=>c.Id);
+
+            int skip = (queryObject.Page - 1) * queryObject.PageSize; 
+           
+            inscription = inscription.Skip(skip).Take(queryObject.PageSize);
+
             return await inscription.ToListAsync();
         }
 
@@ -91,6 +114,15 @@ namespace api_gestion_ecole.Repositories
             _dbContext.Inscription.Remove(inscription);
             await _dbContext.SaveChangesAsync();
             return inscription;
+        }
+
+        public async Task<int?> GetNombreInscriptionsAsync(string anneeScolaireDesignation)
+        {
+            var anneeScolaire = await AnneeScolaireResolver.ResolveAsync(_dbContext, anneeScolaireDesignation);
+            if (anneeScolaire == null) return null;
+
+            return await _dbContext.Inscription
+                .CountAsync(i => i.AnneeScolaireId == anneeScolaire.Id);
         }
 
     }

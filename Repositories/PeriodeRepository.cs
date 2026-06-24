@@ -32,12 +32,12 @@ namespace api_gestion_ecole.Repositories
 
         public async Task<List<Periode>> GetAllAsync()
         {
-            return await _dbContext.Periode.ToListAsync();
+            return await _dbContext.Periode.Include(p=>p.Semestre).ToListAsync();
         }
 
         public async Task<Periode?> GetByIdAsync(int id)
         {
-            var periode = await _dbContext.Periode.FirstOrDefaultAsync(o => o.Id == id);
+            var periode = await _dbContext.Periode.Include(p=>p.Semestre).FirstOrDefaultAsync(o => o.Id == id);
             return periode ?? null;
         }
 
@@ -46,8 +46,29 @@ namespace api_gestion_ecole.Repositories
             var periode = await _dbContext.Periode.FirstOrDefaultAsync(x=>x.Id == id);
             if(periode == null) return null;
             periode.Designation = updatePeriodeDto.Designation;
+            periode.Coefficient = updatePeriodeDto.Coefficient;
+            periode.SemestreId = updatePeriodeDto.SemestreId;
             await _dbContext.SaveChangesAsync();
             return periode;
+        }
+
+        public async Task<int> GetNombrePeriodesAsync()
+        {
+            return await _dbContext.Periode.CountAsync();
+        }
+
+        public async Task<int?> GetNombreCotationsAsync(int periodeId)
+        {
+            var periode = await _dbContext.Periode.FirstOrDefaultAsync(p => p.Id == periodeId);
+            if (periode == null) return null;
+
+            return await _dbContext.Cotation.CountAsync(c => c.PeriodeId == periodeId);
+        }
+
+        public async Task<bool> IsSemestreExistAsync(int id)
+        {
+            var semestre = await _dbContext.Semestre.FirstOrDefaultAsync(s => s.Id == id);
+            return semestre != null;
         }
     }
 }

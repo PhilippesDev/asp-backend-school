@@ -1,6 +1,7 @@
 using api_gestion_ecole.Data;
 using api_gestion_ecole.Dtos;
 using api_gestion_ecole.Dtos.AnneeScolaire;
+using api_gestion_ecole.Helpers;
 using api_gestion_ecole.Interfaces;
 using api_gestion_ecole.Mappers;
 using api_gestion_ecole.Models;
@@ -48,6 +49,7 @@ namespace api_gestion_ecole.Repositories
             var annee = await _dbContext.AnneeScolaire.FirstOrDefaultAsync(a=>a.Id == id);
             if(annee == null) return null;
             annee.Designation = updateAnneeScolaireDto.Designation;
+            annee.Couleur = updateAnneeScolaireDto.Couleur;
             annee.DateDebut = updateAnneeScolaireDto.DateDebut;
             annee.DateFin = updateAnneeScolaireDto.DateFin;
         
@@ -86,6 +88,45 @@ namespace api_gestion_ecole.Repositories
                     return true;
 
             return false;
+        }
+
+        public async Task<int?> GetNombreElevesInscritsAsync(int anneeScolaireId)
+        {
+            var anneeScolaire = await AnneeScolaireResolver.ResolveByIdAsync(_dbContext, anneeScolaireId);
+            if (anneeScolaire == null) return null;
+
+            return await _dbContext.Inscription
+                .CountAsync(i => i.AnneeScolaireId == anneeScolaireId);
+        }
+
+        public async Task<int?> GetNombreElevesInscritsByDesignationAsync(string anneeScolaireDesignation)
+        {
+            var anneeScolaire = await AnneeScolaireResolver.ResolveAsync(_dbContext, anneeScolaireDesignation);
+            if (anneeScolaire == null) return null;
+
+            return await _dbContext.Inscription
+                .CountAsync(i => i.AnneeScolaireId == anneeScolaire.Id);
+        }
+
+        public async Task<int?> GetNombreInscriptionsAsync(int anneeScolaireId)
+        {
+            var anneeScolaire = await AnneeScolaireResolver.ResolveByIdAsync(_dbContext, anneeScolaireId);
+            if (anneeScolaire == null) return null;
+
+            return await _dbContext.Inscription
+                .CountAsync(i => i.AnneeScolaireId == anneeScolaireId);
+        }
+
+        public async Task<int?> GetNombreClassesAsync(int anneeScolaireId)
+        {
+            var anneeScolaire = await AnneeScolaireResolver.ResolveByIdAsync(_dbContext, anneeScolaireId);
+            if (anneeScolaire == null) return null;
+
+            return await _dbContext.Inscription
+                .Where(i => i.AnneeScolaireId == anneeScolaireId)
+                .Select(i => i.ClasseId)
+                .Distinct()
+                .CountAsync();
         }
     }
 }

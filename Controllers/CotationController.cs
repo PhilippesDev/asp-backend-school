@@ -1,4 +1,5 @@
 using api_gestion_ecole.Dtos.Cotation;
+using api_gestion_ecole.Helpers;
 using api_gestion_ecole.Interfaces;
 using api_gestion_ecole.Mappers;
 using Microsoft.AspNetCore.Mvc;
@@ -17,9 +18,9 @@ namespace api_gestion_ecole.Controllers
         }
 
         [HttpGet] 
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(QueryObject queryObject)
         {
-            return Ok((await _repository.GetAllAsync())
+            return Ok((await _repository.GetAllAsync(queryObject))
                     .Select(c=>c.ToCotationDto()));
         }
 
@@ -85,5 +86,11 @@ namespace api_gestion_ecole.Controllers
             return NoContent();
         }
 
+        [HttpGet("nombre")]
+        public async Task<IActionResult> GetNombreCotations()
+        {
+            var nombre = await _repository.GetNombreCotationsAsync();
+            return Ok(new { nombre });
+        }
     }
 }

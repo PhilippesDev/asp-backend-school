@@ -236,9 +236,69 @@ namespace api_gestion_ecole.Repositories
             }  
         }
 
-        public Task<Classe?> GetMontantAPayerParClasseAsync(int classeId, string anneeScolaireDesignation)
+        public async Task<List<ClasseWithMontantFraisDto>?> GetMontantFraisParClasseAsync(
+            string anneeScolaireDesignation, QueryObject queryObject)
         {
-            throw new NotImplementedException();
+            var anneeScolaire = await AnneeScolaireResolver.ResolveAsync(_dbContext, anneeScolaireDesignation);
+            if (anneeScolaire == null) return null;
+
+            var classes = _dbContext.Classe
+                .Select(c => new ClasseWithMontantFraisDto
+                {
+                    Id = c.Id,
+                    OptionId = c.OptionId,
+                    Designation = c.Designation,
+                    Option = c.Option.Designation,
+                    MontantTotal = c.FraisConcernerClasses!
+                        .Where(f => f.AnneeScolaireId == anneeScolaire.Id)
+                        .Sum(f => f.Montant)
+                });
+
+            if (!string.IsNullOrEmpty(queryObject.Designation))
+                classes = classes.Where(c => c.Designation.ToLower()
+                    .Contains(queryObject.Designation.ToLower()));
+
+            if (queryObject.IsDescending == true)
+                classes = classes.OrderByDescending(c => c.Id);
+
+            int skip = (queryObject.Page - 1) * queryObject.PageSize;
+            classes = classes.Skip(skip).Take(queryObject.PageSize);
+
+            return await classes.ToListAsync();
+        }
+
+        public async Task<List<CoursConcernerClasse>?> GetCoursInClasseAsync(
+            int classeId, string anneeScolaireDesignation)
+        {
+            var classe = await _dbContext.Classe.FirstOrDefaultAsync(c => c.Id == classeId);
+            if (classe == null) return null;
+
+            var anneeScolaire = await AnneeScolaireResolver.ResolveAsync(_dbContext, anneeScolaireDesignation);
+            if (anneeScolaire == null) return null;
+
+            return await _dbContext.CoursConcernerClasse
+                .Include(c => c.Cours)
+                .Include(c => c.Classe).ThenInclude(c => c!.Option)
+                .Include(c => c.AnneeScolaire)
+                .Where(c => c.ClasseId == classeId && c.AnneeScolaireId == anneeScolaire.Id)
+                .ToListAsync();
+        }
+
+        public async Task<List<FraisConcernerClasse>?> GetFraisInClasseAsync(
+            int classeId, string anneeScolaireDesignation)
+        {
+            var classe = await _dbContext.Classe.FirstOrDefaultAsync(c => c.Id == classeId);
+            if (classe == null) return null;
+
+            var anneeScolaire = await AnneeScolaireResolver.ResolveAsync(_dbContext, anneeScolaireDesignation);
+            if (anneeScolaire == null) return null;
+
+            return await _dbContext.FraisConcernerClasses
+                .Include(f => f.Frais)
+                .Include(f => f.Classe).ThenInclude(c => c!.Option)
+                .Include(f => f.AnneeScolaire)
+                .Where(f => f.ClasseId == classeId && f.AnneeScolaireId == anneeScolaire.Id)
+                .ToListAsync();
         }
 
     }

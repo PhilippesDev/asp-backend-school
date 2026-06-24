@@ -1,4 +1,5 @@
 using api_gestion_ecole.Dtos.Option_;
+using api_gestion_ecole.Helpers;
 using api_gestion_ecole.Interfaces;
 using api_gestion_ecole.Mappers;
 using Microsoft.AspNetCore.Mvc;
@@ -59,6 +60,68 @@ namespace api_gestion_ecole.Controllers
             var option = await _optionRepository.DeleteAsync(id);
             if(option == null) return NotFound(new { message = "Option introuvable"});
             return NoContent();
+        }
+
+        [HttpGet("nombre")]
+        public async Task<IActionResult> GetNombreOptions()
+        {
+            var nombre = await _optionRepository.GetNombreOptionsAsync();
+            return Ok(new { nombre });
+        }
+
+        [HttpGet("{id:int}/nombre-classes")]
+        public async Task<IActionResult> GetNombreClasses(int id)
+        {
+            var nombre = await _optionRepository.GetNombreClassesAsync(id);
+
+            if (nombre == null)
+                return NotFound(new { message = "Option introuvable" });
+
+            return Ok(new { nombre });
+        }
+
+        [HttpGet("{id:int}/effectif")]
+        public async Task<IActionResult> GetEffectif(int id)
+        {
+            var effectif = await _optionRepository.GetEffectifAsync(id, string.Empty);
+
+            if (effectif == null)
+                return NotFound(new { message = "L'option ou l'année scolaire spécifiée est introuvable" });
+
+            return Ok(new { effectif });
+        }
+
+        [HttpGet("{id:int}/effectif/{anneeScolaireDesignation}")]
+        public async Task<IActionResult> GetEffectif(int id, string anneeScolaireDesignation)
+        {
+            var effectif = await _optionRepository.GetEffectifAsync(id, anneeScolaireDesignation);
+
+            if (effectif == null)
+                return NotFound(new { message = "L'option ou l'année scolaire spécifiée est introuvable" });
+
+            return Ok(new { effectif });
+        }
+
+        [HttpGet("options-effectifs")]
+        public async Task<IActionResult> GetEffectifParOption([FromQuery] QueryObject queryObject)
+        {
+            var options = await _optionRepository.GetEffectifParOptionAsync(string.Empty, queryObject);
+
+            if (options == null)
+                return NotFound(new { message = "Aucune année scolaire est active" });
+
+            return Ok(options);
+        }
+
+        [HttpGet("options-effectifs/{anneeScolaireDesignation}")]
+        public async Task<IActionResult> GetEffectifParOption(string anneeScolaireDesignation, [FromQuery] QueryObject queryObject)
+        {
+            var options = await _optionRepository.GetEffectifParOptionAsync(anneeScolaireDesignation, queryObject);
+
+            if (options == null)
+                return NotFound(new { message = "L'année scolaire spécifiée est introuvable" });
+
+            return Ok(options);
         }
     }
 }

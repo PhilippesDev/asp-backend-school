@@ -50,6 +50,12 @@ namespace api_gestion_ecole.Controllers
 
             if (!classeExists)
                 return BadRequest(new {message ="La classe spécifiée n'existe pas."});
+            
+            var enseignantExists =
+                await _repository.IsClasseExistAsync(createCoursConcernerClasseDto.EnseignantId);
+
+            if (!enseignantExists)
+                return BadRequest(new {message ="L'enseignant spécifié n'existe pas."});
 
             var anneeScolaireExists =
                 await _repository.IsAnneeScolaireExistAsync(createCoursConcernerClasseDto.AnneeScolaireId);
@@ -70,6 +76,9 @@ namespace api_gestion_ecole.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            if (!await _repository.IsEnseignantExistAsync(updateCoursConcernerClasseDto.EnseignantId))
+                return BadRequest(new {message ="L'enseignant spécifié n'existe pas."});
+                
             var result = await _repository.UpdateAsync(id,updateCoursConcernerClasseDto);
 
             if (result == null)

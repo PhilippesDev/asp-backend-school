@@ -15,11 +15,13 @@ namespace api_gestion_ecole.Dtos.Classe
         public DateOnly? DateNaissance { get; set; }
         public string? LieuNaissance { get; set; } = "";
         [Required(AllowEmptyStrings = false, ErrorMessage = "Veillez entrer les noms du père de l'élève")]
+        public string Adresse { get; set; } = string.Empty;
         public string NomsPere { get; set; } = "";
         [Required(AllowEmptyStrings = false, ErrorMessage = "Veillez entrer s noms de la mère de l'élève")]
         public string NomsMere { get; set; } = "";
         public string? NumPere { get; set; } = "";
         public string? NumMere { get; set; } = "";
-        public string? Photo { get; set; }
+        public string? Photo {get; set;} = string.Empty;
+        public IFormFile? ImageFile { get; set; }
     }
 }

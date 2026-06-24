@@ -1,5 +1,6 @@
 using api_gestion_ecole.Data;
 using api_gestion_ecole.Dtos.Paiement;
+using api_gestion_ecole.Helpers;
 using api_gestion_ecole.Interfaces;
 using api_gestion_ecole.Mappers;
 using api_gestion_ecole.Models;
@@ -91,6 +92,59 @@ namespace api_gestion_ecole.Repositories
         {
             var frais = await _dbContext.FraisConcernerClasses.FirstOrDefaultAsync(f=>f.Id == id);
             return frais != null;
+        }
+
+        public async Task<decimal?> GetMontantTotalPayeAsync(string anneeScolaireDesignation)
+        {
+            var anneeScolaire = await AnneeScolaireResolver.ResolveAsync(_dbContext, anneeScolaireDesignation);
+            if (anneeScolaire == null) return null;
+
+            return await _dbContext.Paiement
+                .Where(p => p.Inscription!.AnneeScolaireId == anneeScolaire.Id)
+                .SumAsync(p => p.Montant);
+        }
+
+        public async Task<decimal?> GetMontantPayeByInscriptionAsync(int inscriptionId)
+        {
+            var inscription = await _dbContext.Inscription.FirstOrDefaultAsync(i => i.Id == inscriptionId);
+            if (inscription == null) return null;
+
+            return await _dbContext.Paiement
+                .Where(p => p.InscriptionId == inscriptionId)
+                .SumAsync(p => p.Montant);
+        }
+
+        public async Task<int?> GetNombrePaiementsAsync(string anneeScolaireDesignation)
+        {
+            var anneeScolaire = await AnneeScolaireResolver.ResolveAsync(_dbContext, anneeScolaireDesignation);
+            if (anneeScolaire == null) return null;
+
+            return await _dbContext.Paiement
+                .CountAsync(p => p.Inscription!.AnneeScolaireId == anneeScolaire.Id);
+        }
+
+        public async Task<decimal> GetMontantPayerEntreeCaisse()
+        {
+            var paiements = _dbContext.Paiement.AsQueryable();
+            paiements.Where(p=>p.DatePaiement.Date == DateTime.UtcNow.Date);
+
+            return await  paiements.SumAsync(p=>p.Montant);
+        }
+
+        public async Task<decimal?> GetMontantRestantAsync(int inscriptionId)
+        {
+            var inscription = await _dbContext.Inscription.FirstOrDefaultAsync(i => i.Id == inscriptionId);
+            if (inscription == null) return null;
+
+            var montant_paye =  await _dbContext.Paiement
+                .Where(p => p.InscriptionId == inscriptionId)
+                .SumAsync(p => p.Montant);
+            
+            var montant_a_payer = await _dbContext.FraisConcernerClasses
+                .Where(f =>f.Classe == inscription.Classe && f.AnneeScolaire == inscription.AnneeScolaire)
+                .SumAsync(f => f.Montant);
+        
+            return montant_a_payer - montant_paye;
         }
     }
 }

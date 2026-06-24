@@ -1,8 +1,6 @@
-using System.ComponentModel;
 using api_gestion_ecole.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace api_gestion_ecole.Data
 {
@@ -18,14 +16,17 @@ namespace api_gestion_ecole.Data
         public DbSet<Option> Option { get; set; }
         public DbSet<Frais> Frais { get; set; }
         public DbSet<CategorieFrais> CategorieFrais { get; set; }
+        public DbSet<Semestre> Semestre { get; set; }
         public DbSet<Periode> Periode { get; set; }
         public DbSet<Paiement> Paiement { get; set; }
         public DbSet<Cours> Cours { get; set; }
+        public DbSet<Enseignant> Enseignant { get; set; }
         public DbSet<Inscription> Inscription { get; set; }
         public DbSet<CoursConcernerClasse> CoursConcernerClasse { get; set; }
         public DbSet<FraisConcernerClasse> FraisConcernerClasses { get; set; }
         public DbSet<Cotation> Cotation { get; set; }
-
+        public DbSet<Parent> Parent { get; set; }
+        public DbSet<Presence> Presence { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -40,6 +41,7 @@ namespace api_gestion_ecole.Data
             builder.Entity<CoursConcernerClasse>().HasOne(c=>c.Classe).WithMany(c=>c.CoursConcernerClasses).HasForeignKey(c=>c.ClasseId).OnDelete(DeleteBehavior.Restrict);
             builder.Entity<CoursConcernerClasse>().HasOne(c=>c.Cours).WithMany(c=>c.CoursConcernerClasses).HasForeignKey(c=>c.CoursId).OnDelete(DeleteBehavior.Restrict);
             builder.Entity<CoursConcernerClasse>().HasOne(c=>c.AnneeScolaire).WithMany(a=>a.CoursConcernerClasses).HasForeignKey(c=>c.AnneeScolaireId).OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<CoursConcernerClasse>().HasOne(c=>c.Enseignant).WithMany(e=>e.ConcernerClasses).HasForeignKey(c=>c.EnseignantId).OnDelete(DeleteBehavior.Restrict);
             builder.Entity<CoursConcernerClasse>().HasIndex(c=>new{c.CoursId, c.ClasseId, c.AnneeScolaireId}).IsUnique();
 
             builder.Entity<FraisConcernerClasse>().HasKey(f=>new{f.Id});
@@ -53,7 +55,7 @@ namespace api_gestion_ecole.Data
             builder.Entity<Cotation>().HasOne(c=>c.CoursConcernerClasse).WithMany(c=>c.Cotations).HasForeignKey(c=>c.CoursConcernerClasseId).OnDelete(DeleteBehavior.Restrict);
             builder.Entity<Cotation>().HasOne(c=>c.Periode).WithMany(p=>p.Cotations).HasForeignKey(c=>c.PeriodeId).OnDelete(DeleteBehavior.Restrict);
             builder.Entity<Cotation>().HasIndex(c=>new{c.InscriptionId, c.CoursConcernerClasseId, c.PeriodeId}).IsUnique();
-            
+        
             builder.Entity<AnneeScolaire>().HasIndex(a=> new {a.Designation}).IsUnique();
         }
     }

@@ -11,6 +11,7 @@ namespace api_gestion_ecole.Dtos.Eleve
         public string Sexe { get; set; } = "";
         public DateOnly? DateNaissance { get; set; }
         public string? LieuNaissance { get; set; } = "";
+        public string Adresse { get; set; } = string.Empty;
         public string NomsPere { get; set; } = "";
         public string NomsMere { get; set; } = "";
         public string? NumPere { get; set; } = "";

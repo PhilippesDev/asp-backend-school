@@ -4,7 +4,6 @@ using api_gestion_ecole.Interfaces;
 using api_gestion_ecole.Mappers;
 using Microsoft.AspNetCore.Mvc;
 
-
 namespace api_gestion_ecole.Controllers
 {
     [Route("api/anneescolaires")]
@@ -65,6 +64,51 @@ namespace api_gestion_ecole.Controllers
             var anneeScolaire = await _anneeScolaireRepository.DeleteAsync(id);
             if(anneeScolaire == null) return NotFound(new {message = "Année scolaire introuvable"});
             return NoContent();
+        }
+
+        [HttpGet("effectif")]
+        public async Task<IActionResult> GetEffectifAnneeActive()
+        {
+            var effectif = await _anneeScolaireRepository.GetNombreElevesInscritsByDesignationAsync(string.Empty);
+
+            if (effectif == null)
+                return NotFound(new { message = "Aucune année scolaire active" });
+
+            return Ok(new { effectif });
+        }
+
+        [HttpGet("effectif/{anneeScolaireDesignation}")]
+        public async Task<IActionResult> GetEffectifByDesignation(string anneeScolaireDesignation)
+        {
+            var effectif = await _anneeScolaireRepository
+                .GetNombreElevesInscritsByDesignationAsync(anneeScolaireDesignation);
+
+            if (effectif == null)
+                return NotFound(new { message = "L'année scolaire spécifiée est introuvable" });
+
+            return Ok(new { effectif });
+        }
+
+        [HttpGet("{id:int}/effectif")]
+        public async Task<IActionResult> GetEffectifById(int id)
+        {
+            var effectif = await _anneeScolaireRepository.GetNombreElevesInscritsAsync(id);
+
+            if (effectif == null)
+                return NotFound(new { message = "Année scolaire introuvable" });
+
+            return Ok(new { effectif });
+        }
+
+        [HttpGet("{id:int}/nombre-classes")]
+        public async Task<IActionResult> GetNombreClasses(int id)
+        {
+            var nombre = await _anneeScolaireRepository.GetNombreClassesAsync(id);
+
+            if (nombre == null)
+                return NotFound(new { message = "Année scolaire introuvable" });
+
+            return Ok(new { nombre });
         }
     }
 }

@@ -1,4 +1,6 @@
 using api_gestion_ecole.Dtos.Classe;
+using api_gestion_ecole.Dtos.CoursConcernerClasse;
+using api_gestion_ecole.Dtos.FraisConcernerClasse;
 using api_gestion_ecole.Helpers;
 using api_gestion_ecole.Models;
 
@@ -17,6 +19,8 @@ namespace api_gestion_ecole.Interfaces
         public Task<List<ClasseWithNombreEleves>?> GetNombreEleveParClasseAsync(string anneeScolaireDesignation,QueryObject queryObject);
         public Task<int?> GetNombreCoursInClasseAsync(int classeId, string anneeScolaireDesignation);
         public Task<decimal?> GetMontantAPayerInClasseAsync(int classeId, string anneeScolaireDesignation);
-        public Task<Classe?> GetMontantAPayerParClasseAsync(int classeId, string anneeScolaireDesignation);
+        public Task<List<ClasseWithMontantFraisDto>?> GetMontantFraisParClasseAsync(string anneeScolaireDesignation, QueryObject queryObject);
+        public Task<List<CoursConcernerClasse>?> GetCoursInClasseAsync(int classeId, string anneeScolaireDesignation);
+        public Task<List<FraisConcernerClasse>?> GetFraisInClasseAsync(int classeId, string anneeScolaireDesignation);
     }
 }

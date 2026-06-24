@@ -1,8 +1,10 @@
 using api_gestion_ecole.Data;
 using api_gestion_ecole.Dtos.Cours;
+using api_gestion_ecole.Helpers;
 using api_gestion_ecole.Interfaces;
 using api_gestion_ecole.Mappers;
 using api_gestion_ecole.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace api_gestion_ecole.Repositories
@@ -30,9 +32,26 @@ namespace api_gestion_ecole.Repositories
             return option;
         }
 
-        public async Task<List<Cours>> GetAllAsync()
+        public async Task<List<Cours>> GetAllAsync(QueryObject queryObject)
         {
-            return await _dbContext.Cours.ToListAsync();
+            var cours = _dbContext.Cours.AsQueryable();
+
+            if(!string.IsNullOrEmpty(queryObject.Designation))
+                cours = cours.Where(c=>
+                    c.Designation!.ToLower()
+                        .Contains(queryObject.Designation.ToLower()) || 
+                     c.Abreviation!.ToLower()
+                        .Contains(queryObject.Designation.ToLower())
+                     );
+            
+            if(queryObject.IsDescending == true) 
+                cours = cours.OrderByDescending(c=>c.Id);
+
+            int skip = (queryObject.Page - 1) * queryObject.PageSize; 
+           
+            cours = cours.Skip(skip).Take(queryObject.PageSize);
+
+            return await cours.ToListAsync();
         }
 
         public async Task<Cours?> GetByIdAsync(int id)
@@ -49,6 +68,42 @@ namespace api_gestion_ecole.Repositories
             cours.Abreviation = updateCoursDto.Abreviation;
             await _dbContext.SaveChangesAsync();
             return cours;
+        }
+
+        public async Task<int> GetNombreCoursAsync()
+        {
+            return await _dbContext.Cours.CountAsync();
+        }
+
+        public async Task<int?> GetNombreClassesConcerneesAsync(int coursId, string anneeScolaireDesignation)
+        {
+            var cours = await _dbContext.Cours.FirstOrDefaultAsync(c => c.Id == coursId);
+            if (cours == null) return null;
+
+            var anneeScolaire = await AnneeScolaireResolver.ResolveAsync(_dbContext, anneeScolaireDesignation);
+            if (anneeScolaire == null) return null;
+
+            return await _dbContext.CoursConcernerClasse
+                .CountAsync(c => c.CoursId == coursId && c.AnneeScolaireId == anneeScolaire.Id);
+        }
+
+        public async Task<List<CoursConcernerClasse>?> GetListedeCoursPourClasseAsync(int classeId, string anneeScolaireDesignation)
+        {
+            var classe = await _dbContext.Classe.FirstOrDefaultAsync(c => c.Id == classeId);
+            if (classe == null) return null;
+
+            var anneeScolaire = await AnneeScolaireResolver.ResolveAsync(_dbContext, anneeScolaireDesignation);
+            if (anneeScolaire == null) return null;
+
+            var coursConcernerClasse = _dbContext.CoursConcernerClasse
+                                            .Include(c=>c.Cours)
+                                            .Include(c=>c.Classe).ThenInclude(c=>c!.Option)
+                                            .Include(c=>c.AnneeScolaire)
+                                            .Include(c=>c.Enseignant)
+                                            .AsQueryable();
+
+            var cours = coursConcernerClasse.Where(c=> c.Classe == classe && c.AnneeScolaire == anneeScolaire); 
+            return await cours.ToListAsync();
         }
     }
 }

@@ -13,5 +13,6 @@ namespace api_gestion_ecole.Interfaces
         public Task<bool> IsCoursExistAsync(int id);
         public Task<bool> IsClasseExistAsync(int id);
         public Task<bool> IsAnneeScolaireExistAsync(int id);
+        public  Task<bool> IsEnseignantExistAsync(int id);
     }
 }

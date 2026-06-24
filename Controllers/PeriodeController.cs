@@ -14,6 +14,7 @@ namespace api_gestion_ecole.Controllers
         {
             _periodeRepository = periodeRepository;
         }
+
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -37,6 +38,9 @@ namespace api_gestion_ecole.Controllers
         {
             if(!ModelState.IsValid) return BadRequest(ModelState);
 
+            if(!await _periodeRepository.IsSemestreExistAsync(createPeriodeDto.SemestreId))
+                return BadRequest(new {message = "Le semestre spécifié est introuvable"});
+
             var periode = await _periodeRepository.CreateAsync(createPeriodeDto);
             return StatusCode(201, periode?.ToPeriodeDto());
         }
@@ -45,6 +49,9 @@ namespace api_gestion_ecole.Controllers
         public async Task<IActionResult> Update(int id, [FromBody] UpdatePeriodeDto updatePeriodeDto)
         {
             if(!ModelState.IsValid) return BadRequest(ModelState);
+
+             if(!await _periodeRepository.IsSemestreExistAsync(updatePeriodeDto.SemestreId))
+                return BadRequest(new {message = "Le semestre spécifié est introuvable"});
 
             var periode = await _periodeRepository.UpdateAsync(id, updatePeriodeDto);
             if(periode == null) return NotFound(new { message = "Periode introuvable" });
@@ -59,6 +66,24 @@ namespace api_gestion_ecole.Controllers
             var periode = await _periodeRepository.DeleteAsync(id);
             if(periode == null) return NotFound(new { message = "Periode introuvable"});
             return NoContent();
+        }
+
+        [HttpGet("nombre")]
+        public async Task<IActionResult> GetNombrePeriodes()
+        {
+            var nombre = await _periodeRepository.GetNombrePeriodesAsync();
+            return Ok(new { nombre });
+        }
+
+        [HttpGet("{id:int}/nombre-cotations")]
+        public async Task<IActionResult> GetNombreCotations(int id)
+        {
+            var nombre = await _periodeRepository.GetNombreCotationsAsync(id);
+
+            if (nombre == null)
+                return NotFound(new { message = "Période introuvable" });
+
+            return Ok(new { nombre });
         }
     }
 }

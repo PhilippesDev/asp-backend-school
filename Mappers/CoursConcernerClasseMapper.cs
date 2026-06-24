@@ -12,11 +12,14 @@ namespace api_gestion_ecole.Mappers
                 Id = coursConcernerClasse.Id,
                 CoursId = coursConcernerClasse.CoursId,
                 ClassId = coursConcernerClasse.ClasseId,
+                EnseignantId = coursConcernerClasse.EnseignantId,
                 AnneeScolaireId = coursConcernerClasse.AnneeScolaireId,
                 Max = coursConcernerClasse.Max,
+                NombreHeures = coursConcernerClasse.NombreHeures,
                 CoursNom = coursConcernerClasse?.Cours?.Designation,
                 ClasseNom = coursConcernerClasse?.Classe?.Designation,
                 Option = coursConcernerClasse?.Classe?.Option?.Designation,
+                Enseignant = $"{coursConcernerClasse?.Enseignant?.Prenom} {coursConcernerClasse?.Enseignant?.Nom}",
                 AnneeScolaire = coursConcernerClasse?.AnneeScolaire?.Designation
             };
         }
@@ -26,8 +29,10 @@ namespace api_gestion_ecole.Mappers
             {
                 CoursId = createCoursConcernerClasseDto.CoursId,
                 ClasseId = createCoursConcernerClasseDto.ClasseId,
+                EnseignantId = createCoursConcernerClasseDto.EnseignantId,
                 AnneeScolaireId = createCoursConcernerClasseDto.AnneeScolaireId,
-                Max = createCoursConcernerClasseDto.Max
+                Max = createCoursConcernerClasseDto.Max,
+                NombreHeures = createCoursConcernerClasseDto.NombreHeures
             };
         }
     }

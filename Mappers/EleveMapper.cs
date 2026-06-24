@@ -16,6 +16,7 @@ namespace api_gestion_ecole.Mappers
                 Sexe = createEleveDto.Sexe,
                 DateNaissance = createEleveDto.DateNaissance,
                 LieuNaissance = createEleveDto.LieuNaissance,
+                Adresse = createEleveDto.Adresse,
                 NomsPere = createEleveDto.NomsPere,
                 NomsMere = createEleveDto.NomsMere,
                 NumPere = createEleveDto.NumPere,
@@ -32,6 +33,7 @@ namespace api_gestion_ecole.Mappers
             eleve.Sexe = updateEleveDto.Sexe;
             eleve.DateNaissance = updateEleveDto.DateNaissance;
             eleve.LieuNaissance = updateEleveDto.LieuNaissance;
+            eleve.Adresse = updateEleveDto.Adresse;
             eleve.NomsPere = updateEleveDto.NomsPere;
             eleve.NomsMere = updateEleveDto.NomsMere;
             eleve.NumPere = updateEleveDto.NumPere;
@@ -49,6 +51,7 @@ namespace api_gestion_ecole.Mappers
                 Sexe = eleve.Sexe,
                 DateNaissance = eleve.DateNaissance,
                 LieuNaissance = eleve.LieuNaissance,
+                Adresse = eleve.Adresse,
                 NomsPere = eleve.NomsPere,
                 NomsMere = eleve.NomsMere,
                 NumPere = eleve.NumPere ,

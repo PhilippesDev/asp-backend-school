@@ -10,5 +10,7 @@ namespace api_gestion_ecole.Interfaces
         public Task<CategorieFrais?> CreateAsync(CreateCategorieFraisDto createCategorieFraisDto);
         public Task<CategorieFrais?> UpdateAsync(int id, UpdateCategorieFraisDto updateCategorieFraisDto);
         public Task<CategorieFrais?> DeleteAsync(int id);
+        public Task<int> GetNombreCategoriesAsync();
+        public Task<int?> GetNombreFraisAsync(int categorieFraisId);
     }
 }

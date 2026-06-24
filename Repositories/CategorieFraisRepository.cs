@@ -49,5 +49,18 @@ namespace api_gestion_ecole.Repositories
             await _dbContext.SaveChangesAsync();
             return categorieFrais;
         }
+
+        public async Task<int> GetNombreCategoriesAsync()
+        {
+            return await _dbContext.CategorieFrais.CountAsync();
+        }
+
+        public async Task<int?> GetNombreFraisAsync(int categorieFraisId)
+        {
+            var categorie = await _dbContext.CategorieFrais.FirstOrDefaultAsync(c => c.Id == categorieFraisId);
+            if (categorie == null) return null;
+
+            return await _dbContext.Frais.CountAsync(f => f.CategorieFraisId == categorieFraisId);
+        }
     }
 }

@@ -1,6 +1,7 @@
 using api_gestion_ecole.Data;
 using api_gestion_ecole.Dtos.Classe;
 using api_gestion_ecole.Dtos.Eleve;
+using api_gestion_ecole.Helpers;
 using api_gestion_ecole.Interfaces;
 using api_gestion_ecole.Mappers;
 using api_gestion_ecole.Models;
@@ -33,7 +34,27 @@ namespace api_gestion_ecole.Repositories
 
         public async Task<List<Eleve>> GetAllAsync()
         {
+            // var eleves = _dbContext.Eleve
             return await _dbContext.Eleve.ToListAsync();
+        
+            /* if(!string.IsNullOrEmpty(queryObject.Noms))
+                eleves = eleves.Where(c=>
+                    c.Nom!.ToLower()
+                        .Contains(queryObject.Noms.ToLower()) || 
+                     c.Postnom!.ToLower()
+                        .Contains(queryObject.Noms.ToLower()) ||
+                    c.Prenom!.ToLower()
+                        .Contains(queryObject.Noms.ToLower())
+                     );
+            
+            if(queryObject.IsDescending == true) 
+                eleves = eleves.OrderByDescending(c=>c.Id); */
+
+            /* int skip = (queryObject.Page - 1) * queryObject.PageSize; 
+           
+            eleves = eleves.Skip(skip).Take(queryObject.PageSize); */
+
+            // return await eleves.ToListAsync();
         }
 
         public async Task<Eleve?> GetByIdAsync(int id)
@@ -49,6 +70,19 @@ namespace api_gestion_ecole.Repositories
             eleve.UpdateEleve(updateEleveDto);
             await _dbContext.SaveChangesAsync();
             return eleve;
+        }
+
+        public async Task<int> GetNombreElevesAsync()
+        {
+            return await _dbContext.Eleve.CountAsync();
+        }
+
+        public async Task<int?> GetNombreInscriptionsAsync(int eleveId)
+        {
+            var eleve = await _dbContext.Eleve.FirstOrDefaultAsync(e => e.Id == eleveId);
+            if (eleve == null) return null;
+
+            return await _dbContext.Inscription.CountAsync(i => i.EleveId == eleveId);
         }
     }
 }

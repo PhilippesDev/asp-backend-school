@@ -12,8 +12,8 @@ using api_gestion_ecole.Data;
 namespace api_gestion_ecole.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260619154942_MigrationInitailBd")]
-    partial class MigrationInitailBd
+    [Migration("20260624083932_InitialMigration2")]
+    partial class InitialMigration2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -164,6 +164,9 @@ namespace api_gestion_ecole.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Couleur")
+                        .HasColumnType("text");
 
                     b.Property<DateOnly>("DateDebut")
                         .HasColumnType("date");
@@ -361,7 +364,13 @@ namespace api_gestion_ecole.Migrations
                     b.Property<int>("CoursId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("EnseignantId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Max")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("NombreHeures")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -369,6 +378,8 @@ namespace api_gestion_ecole.Migrations
                     b.HasIndex("AnneeScolaireId");
 
                     b.HasIndex("ClasseId");
+
+                    b.HasIndex("EnseignantId");
 
                     b.HasIndex("CoursId", "ClasseId", "AnneeScolaireId")
                         .IsUnique();
@@ -383,6 +394,10 @@ namespace api_gestion_ecole.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Adresse")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateOnly?>("DateNaissance")
                         .HasColumnType("date");
@@ -408,6 +423,9 @@ namespace api_gestion_ecole.Migrations
                     b.Property<string>("NumPere")
                         .HasColumnType("text");
 
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Photo")
                         .HasColumnType("text");
 
@@ -425,7 +443,64 @@ namespace api_gestion_ecole.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ParentId");
+
                     b.ToTable("Eleve");
+                });
+
+            modelBuilder.Entity("api_gestion_ecole.Models.Enseignant", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Adresse")
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly?>("DateNaissance")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LieuNaissance")
+                        .HasColumnType("text");
+
+                    b.Property<string>("NiveauEtude")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Nom")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Photo")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Postnom")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Prenom")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Sexe")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Specialite")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Telephone")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Enseignant");
                 });
 
             modelBuilder.Entity("api_gestion_ecole.Models.Frais", b =>
@@ -563,7 +638,90 @@ namespace api_gestion_ecole.Migrations
                     b.ToTable("Paiement");
                 });
 
+            modelBuilder.Entity("api_gestion_ecole.Models.Parent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Nom")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Postnom")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Prenom")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Profession")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Sexe")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Telephone")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Parent");
+                });
+
             modelBuilder.Entity("api_gestion_ecole.Models.Periode", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("Coefficient")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("Designation")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("SemestreId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SemestreId");
+
+                    b.ToTable("Periode");
+                });
+
+            modelBuilder.Entity("api_gestion_ecole.Models.Presence", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateOnly>("DatePresence")
+                        .HasColumnType("date");
+
+                    b.Property<int>("InscriptionId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InscriptionId");
+
+                    b.ToTable("Presence");
+                });
+
+            modelBuilder.Entity("api_gestion_ecole.Models.Semestre", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -577,7 +735,7 @@ namespace api_gestion_ecole.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Periode");
+                    b.ToTable("Semestre");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -689,11 +847,28 @@ namespace api_gestion_ecole.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("api_gestion_ecole.Models.Enseignant", "Enseignant")
+                        .WithMany("ConcernerClasses")
+                        .HasForeignKey("EnseignantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("AnneeScolaire");
 
                     b.Navigation("Classe");
 
                     b.Navigation("Cours");
+
+                    b.Navigation("Enseignant");
+                });
+
+            modelBuilder.Entity("api_gestion_ecole.Models.Eleve", b =>
+                {
+                    b.HasOne("api_gestion_ecole.Models.Parent", "Parent")
+                        .WithMany("Eleves")
+                        .HasForeignKey("ParentId");
+
+                    b.Navigation("Parent");
                 });
 
             modelBuilder.Entity("api_gestion_ecole.Models.Frais", b =>
@@ -780,6 +955,28 @@ namespace api_gestion_ecole.Migrations
                     b.Navigation("Inscription");
                 });
 
+            modelBuilder.Entity("api_gestion_ecole.Models.Periode", b =>
+                {
+                    b.HasOne("api_gestion_ecole.Models.Semestre", "Semestre")
+                        .WithMany("Periodes")
+                        .HasForeignKey("SemestreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Semestre");
+                });
+
+            modelBuilder.Entity("api_gestion_ecole.Models.Presence", b =>
+                {
+                    b.HasOne("api_gestion_ecole.Models.Inscription", "Inscription")
+                        .WithMany("Presences")
+                        .HasForeignKey("InscriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Inscription");
+                });
+
             modelBuilder.Entity("api_gestion_ecole.Models.AnneeScolaire", b =>
                 {
                     b.Navigation("CoursConcernerClasses");
@@ -818,6 +1015,11 @@ namespace api_gestion_ecole.Migrations
                     b.Navigation("Insciptions");
                 });
 
+            modelBuilder.Entity("api_gestion_ecole.Models.Enseignant", b =>
+                {
+                    b.Navigation("ConcernerClasses");
+                });
+
             modelBuilder.Entity("api_gestion_ecole.Models.Frais", b =>
                 {
                     b.Navigation("FraisConcernerClasses");
@@ -833,6 +1035,8 @@ namespace api_gestion_ecole.Migrations
                     b.Navigation("Cotations");
 
                     b.Navigation("Paiements");
+
+                    b.Navigation("Presences");
                 });
 
             modelBuilder.Entity("api_gestion_ecole.Models.Option", b =>
@@ -840,9 +1044,19 @@ namespace api_gestion_ecole.Migrations
                     b.Navigation("Classes");
                 });
 
+            modelBuilder.Entity("api_gestion_ecole.Models.Parent", b =>
+                {
+                    b.Navigation("Eleves");
+                });
+
             modelBuilder.Entity("api_gestion_ecole.Models.Periode", b =>
                 {
                     b.Navigation("Cotations");
+                });
+
+            modelBuilder.Entity("api_gestion_ecole.Models.Semestre", b =>
+                {
+                    b.Navigation("Periodes");
                 });
 #pragma warning restore 612, 618
         }

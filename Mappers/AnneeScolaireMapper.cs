@@ -10,6 +10,7 @@ namespace api_gestion_ecole.Mappers
         {
             return new AnneeScolaire
             {   Designation = createAnneeScolaireDto.Designation,
+                Couleur = createAnneeScolaireDto.Couleur,
                 DateDebut = createAnneeScolaireDto.DateDebut,
                 DateFin = createAnneeScolaireDto.DateFin
             };
@@ -21,6 +22,7 @@ namespace api_gestion_ecole.Mappers
             {
                 Id = anneeScolaire.Id,
                 Designation = anneeScolaire.Designation,
+                Couleur = anneeScolaire.Couleur,
                 DateDebut = anneeScolaire.DateDebut,
                 DateFin = anneeScolaire.DateFin,
                 EstActive = anneeScolaire.EstActive

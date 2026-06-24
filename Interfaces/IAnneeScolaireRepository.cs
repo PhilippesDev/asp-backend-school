@@ -13,5 +13,9 @@ namespace api_gestion_ecole.Interfaces
         public Task<AnneeScolaire?> DeleteAsync(int id);
         public Task<bool> IsAnneeScolaireExist(int id,string designation);
         public Task<AnneeScolaire?> ActiveAnneeScolaireAsync(int id);
+        public Task<int?> GetNombreElevesInscritsAsync(int anneeScolaireId);
+        public Task<int?> GetNombreElevesInscritsByDesignationAsync(string anneeScolaireDesignation);
+        public Task<int?> GetNombreInscriptionsAsync(int anneeScolaireId);
+        public Task<int?> GetNombreClassesAsync(int anneeScolaireId);
     }
 }
