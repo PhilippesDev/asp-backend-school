@@ -78,7 +78,7 @@ namespace api_gestion_ecole.Repositories
         public async Task<AppUser?> GetByIdAsync(string id)
         {
             return await _userManager.Users.FirstOrDefaultAsync(u=>
-                                u.Id == id || u.Email == id);
+                                u.Id == id || u.Email == id); // Hello
         }
         public async Task<bool> IsEmailExistAsync(string email)
         {
