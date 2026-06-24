@@ -71,6 +71,7 @@ builder.Services.AddScoped<ICotationRepository, CotationRepository>();
 builder.Services.AddScoped<IBulletinsRepository, BulletinsRepository>();
 builder.Services.AddScoped<IParentRepository, ParentRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IPresenceRepository, PresenceRepository>();
 builder.Services.AddScoped<UploadImageService>();
 builder.Services.AddScoped<IRolesRepository, RolesRepository>();
 builder.Services.AddScoped<TokenService>();
