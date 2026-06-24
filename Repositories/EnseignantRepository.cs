@@ -31,30 +31,9 @@ namespace api_gestion_ecole.Repositories
             await _dbContext.SaveChangesAsync();
             return enseignant;
         }
-        public async Task<List<Enseignant>> GetAllAsync(QueryObjectForPeople queryObject)
+        public async Task<List<Enseignant>> GetAllAsync()
         {
-            var enseignants =  _dbContext.Enseignant.AsQueryable();
-        
-            if(!string.IsNullOrEmpty(queryObject.Noms))
-                enseignants = enseignants.Where(c=>
-                    c.Nom!.ToLower()
-                        .Contains(queryObject.Noms.ToLower()) || 
-                     c.Postnom!.ToLower()
-                        .Contains(queryObject.Noms.ToLower()) ||
-                    c.Prenom!.ToLower()
-                        .Contains(queryObject.Noms.ToLower()) ||
-                    c.Specialite!.ToLower()
-                        .Contains(queryObject.Noms.ToLower())
-                     );
-            
-            if(queryObject.IsDescending == true) 
-                enseignants = enseignants.OrderByDescending(c=>c.Id);
-
-            int skip = (queryObject.Page - 1) * queryObject.PageSize; 
-           
-            enseignants = enseignants.Skip(skip).Take(queryObject.PageSize);
-
-            return await enseignants.ToListAsync();
+            return await _dbContext.Enseignant.ToListAsync();
         }
 
         public async Task<Enseignant?> GetByIdAsync(int id)

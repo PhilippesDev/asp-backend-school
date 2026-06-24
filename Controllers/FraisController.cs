@@ -16,11 +16,11 @@ namespace api_gestion_ecole.Controllers
             _fraisRepository = fraisRepository;
         }
         [HttpGet]
-        public async Task<IActionResult> Get(QueryObject queryObject)
+        public async Task<IActionResult> Get()
         {
             if(!ModelState.IsValid) return BadRequest(ModelState);
 
-            return Ok((await _fraisRepository.GetAllAsync(queryObject)).Select(f=>f.ToFraisDto()));
+            return Ok((await _fraisRepository.GetAllAsync()).Select(f=>f.ToFraisDto()));
         }
 
         [HttpGet("{id:int}")]

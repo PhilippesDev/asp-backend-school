@@ -18,9 +18,9 @@ namespace api_gestion_ecole.Controllers
         }
 
         [HttpGet] 
-        public async Task<IActionResult> GetAll(QueryObject queryObject)
+        public async Task<IActionResult> GetAll()
         {
-            return Ok((await _repository.GetAllAsync(queryObject))
+            return Ok((await _repository.GetAllAsync())
                     .Select(c=>c.ToCotationDto()));
         }
 

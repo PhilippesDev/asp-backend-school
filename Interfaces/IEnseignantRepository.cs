@@ -6,7 +6,7 @@ namespace api_gestion_ecole.Interfaces
 {
     public interface IEnseignantRepository
     {
-        public Task<List<Enseignant>> GetAllAsync(QueryObjectForPeople queryObject);
+        public Task<List<Enseignant>> GetAllAsync();
         public Task<Enseignant?> GetByIdAsync(int id);
         public Task<Enseignant?> CreateAsync(CreateEnseignantDto createEnseignantDto);
         public Task<Enseignant?> UpdateAsync(int id, UpdateEnseignantDto updateEnseignantDto);

@@ -50,9 +50,9 @@ namespace api_gestion_ecole.Repositories
             return cotation;
         }
         
-        public async Task<List<Cotation>> GetAllAsync(QueryObject queryObject)
+        public async Task<List<Cotation>> GetAllAsync()
         {
-            var cotations = _dbContext.Cotation
+            return await _dbContext.Cotation
                         .Include(c=>c.CoursConcernerClasse)
                             .ThenInclude(c=>c.Cours)
                         .Include(c=>c.CoursConcernerClasse)
@@ -60,33 +60,7 @@ namespace api_gestion_ecole.Repositories
                                 .ThenInclude(c=>c!.Option)
                         .Include(c=>c.Inscription)
                             .ThenInclude(i=>i!.Eleve)
-                        .Include(c=>c.Periode).AsQueryable();
-            
-
-            if(!string.IsNullOrEmpty(queryObject.Designation))
-                cotations = cotations.Where(c=>
-                    c.CoursConcernerClasse.Classe!.Designation!.ToLower()
-                        .Contains(queryObject.Designation.ToLower()) || 
-                     c.CoursConcernerClasse.Cours!.Designation.ToLower()
-                        .Contains(queryObject.Designation.ToLower()) ||
-                         c.Inscription!.Eleve!.Nom.ToLower()
-                        .Contains(queryObject.Designation.ToLower()) ||
-                          c.Inscription!.Eleve!.Postnom.ToLower()
-                        .Contains(queryObject.Designation.ToLower()) ||
-                          c.Inscription!.Eleve!.Prenom.ToLower()
-                        .Contains(queryObject.Designation.ToLower()) ||
-                         c.CoursConcernerClasse.Classe.Option.Designation.ToLower()
-                        .Contains(queryObject.Designation.ToLower())
-                     );
-            
-            if(queryObject.IsDescending == true) 
-                cotations = cotations.OrderByDescending(c=>c.Id);
-
-            int skip = (queryObject.Page - 1) * queryObject.PageSize; 
-           
-            cotations = cotations.Skip(skip).Take(queryObject.PageSize);
-
-            return await cotations.ToListAsync();
+                        .Include(c=>c.Periode).ToListAsync();
         }
 
         public async Task<Cotation?> GetByIdAsync(int id)
