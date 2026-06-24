@@ -76,9 +76,24 @@ builder.Services.AddScoped<IRolesRepository, RolesRepository>();
 builder.Services.AddScoped<TokenService>();
 
 
+const string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("http://localhost:3000") // L'URL du frontend React
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+                      });
+});
+
+
 var app = builder.Build();
 app.UseHttpsRedirection();
 app.MapControllers();
+app.UseCors(MyAllowSpecificOrigins);
 app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
