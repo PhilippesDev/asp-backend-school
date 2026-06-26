@@ -30,7 +30,7 @@ namespace api_gestion_ecole.Controllers
             return Ok(user.ToUserDto());
         }
 
-        [HttpPost("/signin")]
+        [HttpPost("signup")]
         public async Task<IActionResult> Post([FromBody] RegistorUserDto registorUserDto)
         {
             if(!ModelState.IsValid)
@@ -46,7 +46,7 @@ namespace api_gestion_ecole.Controllers
             return StatusCode(201, user);
         }
 
-        [HttpPost("/login")]
+        [HttpPost("login")]
         public async Task<IActionResult> Post([FromBody] LoginDto loginDto)
         {
             if(!ModelState.IsValid)
