@@ -27,7 +27,6 @@ namespace api_gestion_ecole.Data
         public DbSet<Cotation> Cotation { get; set; }
         public DbSet<Parent> Parent { get; set; }
         public DbSet<Presence> Presence { get; set; }
-        public DbSet<Niveau> Niveau { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

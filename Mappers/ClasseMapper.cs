@@ -9,11 +9,7 @@ namespace api_gestion_ecole.Mappers
     {
         public static Classe ToClasseFromCreate(this CreateClasseDto createClasseDto)
         {
-            return new Classe {
-                Designation = createClasseDto.Designation, 
-                OptionId = createClasseDto.OptionId, 
-                NiveauId = createClasseDto.NiveauId
-            };
+            return new Classe {Designation = createClasseDto.Designation, OptionId = createClasseDto.OptionId};
         }
 
         public static ClasseDto ToClasseDto(this Classe classe)
@@ -22,9 +18,7 @@ namespace api_gestion_ecole.Mappers
             {
                 Id = classe.Id,
                 OptionId = classe.OptionId,
-                NiveauId = classe.NiveauId,
                 Designation = classe.Designation,
-                Niveau = classe?.Niveau?.Designation,
                 Option = classe?.Option?.Designation
             };
         }

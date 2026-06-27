@@ -279,15 +279,10 @@ namespace api_gestion_ecole.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("NiveauId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("OptionId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("NiveauId");
 
                     b.HasIndex("OptionId");
 
@@ -591,23 +586,6 @@ namespace api_gestion_ecole.Migrations
                     b.ToTable("Inscription");
                 });
 
-            modelBuilder.Entity("api_gestion_ecole.Models.Niveau", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Designation")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Niveau");
-                });
-
             modelBuilder.Entity("api_gestion_ecole.Models.Option", b =>
                 {
                     b.Property<int>("Id")
@@ -810,19 +788,11 @@ namespace api_gestion_ecole.Migrations
 
             modelBuilder.Entity("api_gestion_ecole.Models.Classe", b =>
                 {
-                    b.HasOne("api_gestion_ecole.Models.Niveau", "Niveau")
-                        .WithMany("Classes")
-                        .HasForeignKey("NiveauId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("api_gestion_ecole.Models.Option", "Option")
                         .WithMany("Classes")
                         .HasForeignKey("OptionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Niveau");
 
                     b.Navigation("Option");
                 });
@@ -1064,11 +1034,6 @@ namespace api_gestion_ecole.Migrations
                     b.Navigation("Paiements");
 
                     b.Navigation("Presences");
-                });
-
-            modelBuilder.Entity("api_gestion_ecole.Models.Niveau", b =>
-                {
-                    b.Navigation("Classes");
                 });
 
             modelBuilder.Entity("api_gestion_ecole.Models.Option", b =>

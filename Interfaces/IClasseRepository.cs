@@ -14,7 +14,6 @@ namespace api_gestion_ecole.Interfaces
         public Task<Classe?> UpdateAsync(int id, UpdateClasseDto updateClasseDto);
         public Task<Classe?> DeleteAsync(int id);
         public Task<bool> IsOptionExitAsync(int id);
-        public Task<bool> IsNiveauExitAsync(int id);
         public Task<int> GetNombreClasseAsync();
         public Task<int?> GetNombreEleveInClasseAsync(int classeId, string anneeScolaireDesignation);
         public Task<List<ClasseWithNombreEleves>?> GetNombreEleveParClasseAsync(string anneeScolaireDesignation,QueryObject queryObject);
