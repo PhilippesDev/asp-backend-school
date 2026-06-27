@@ -12,8 +12,8 @@ using api_gestion_ecole.Data;
 namespace api_gestion_ecole.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260624083932_InitialMigration2")]
-    partial class InitialMigration2
+    [Migration("20260627171826_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
