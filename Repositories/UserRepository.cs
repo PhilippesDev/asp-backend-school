@@ -16,6 +16,7 @@ namespace api_gestion_ecole.Repositories
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ApplicationDbContext _dbContext;
         private readonly TokenService _tokenService;
+        
         public UserRepository(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, TokenService tokenService, ApplicationDbContext dbContext)
         {
             _userManager = userManager;
@@ -85,42 +86,42 @@ namespace api_gestion_ecole.Repositories
             var user = await _userManager.FindByEmailAsync(email);
             return user != null;
         }
-    public async Task<AuthentificatedUserDto?> UpdateAsync(string id, UpdateUserDto updateUserDto)  
-    {
-        var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == id || u.Email == id);
-        if (user == null) return null;
-    
-        if (!string.Equals(user.Email, updateUserDto.Email, StringComparison.OrdinalIgnoreCase))
+        public async Task<AuthentificatedUserDto?> UpdateAsync(string id, UpdateUserDto updateUserDto)  
         {
-            var emailExiste = await _userManager.FindByEmailAsync(updateUserDto.Email);
-            if (emailExiste != null) 
-            {
-                throw new Exception("Cet adresse email est déjà utilisée par un autre compte.");
-            }
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == id || u.Email == id);
+            if (user == null) return null;
         
-            var emailResult = await _userManager.SetEmailAsync(user, updateUserDto.Email);
-            if (!emailResult.Succeeded) return null;
-        }
-
-        if (!string.Equals(user.UserName, updateUserDto.UserName, StringComparison.OrdinalIgnoreCase))
-        {
-            var userNameExiste = await _userManager.FindByNameAsync(updateUserDto.UserName);
-            if (userNameExiste != null)
+            if (!string.Equals(user.Email, updateUserDto.Email, StringComparison.OrdinalIgnoreCase))
             {
-                throw new Exception("Ce nom d'utilisateur est déjà pris.");
+                var emailExiste = await _userManager.FindByEmailAsync(updateUserDto.Email);
+            if (emailExiste != null) 
+                {
+                    throw new Exception("Cet adresse email est déjà utilisée par un autre compte.");
+                }
+            
+                var emailResult = await _userManager.SetEmailAsync(user, updateUserDto.Email);
+                if (!emailResult.Succeeded) return null;
             }
 
-            var userResult = await _userManager.SetUserNameAsync(user, updateUserDto.UserName);
-            if (!userResult.Succeeded) return null;
+            if (!string.Equals(user.UserName, updateUserDto.UserName, StringComparison.OrdinalIgnoreCase))
+            {
+                var userNameExiste = await _userManager.FindByNameAsync(updateUserDto.UserName);
+                if (userNameExiste != null)
+                {
+                    throw new Exception("Ce nom d'utilisateur est déjà pris.");
+                }
+
+                var userResult = await _userManager.SetUserNameAsync(user, updateUserDto.UserName);
+                if (!userResult.Succeeded) return null;
+            }
+
+
+            var updateResult = await _userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded) return null;
+
+            var token = await _tokenService.CreateToken(user, _userManager);    
+            return user.ToAuthentifactedUserDto(token);
         }
-
-
-        var updateResult = await _userManager.UpdateAsync(user);
-        if (!updateResult.Succeeded) return null;
-
-        var token = await _tokenService.CreateToken(user, _userManager);    
-        return user.ToAuthentifactedUserDto(token);
-    }
         public async Task<AuthentificatedUserDto?> ChangePasswordAsync(string id, ChangePasswordDto changePasswordDto)
         {
             var user = await _userManager.Users.FirstOrDefaultAsync(u=>

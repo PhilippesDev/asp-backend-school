@@ -56,7 +56,7 @@ namespace api_gestion_ecole.Data
             builder.Entity<Cotation>().HasOne(c=>c.Periode).WithMany(p=>p.Cotations).HasForeignKey(c=>c.PeriodeId).OnDelete(DeleteBehavior.Restrict);
             builder.Entity<Cotation>().HasIndex(c=>new{c.InscriptionId, c.CoursConcernerClasseId, c.PeriodeId}).IsUnique();
         
-            builder.Entity<AnneeScolaire>().HasIndex(a=> new {a.Designation}).IsUnique();
+            builder.Entity<AnneeScolaire>().HasIndex(a=> new {a.Designation}).IsUnique();  
         }
     }
 }
