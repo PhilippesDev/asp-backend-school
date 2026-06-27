@@ -43,6 +43,11 @@ namespace api_gestion_ecole.Controllers
                 return BadRequest(new {message = "Veillez entrer une option existante"});
             }
 
+            if(!await _classeRepository.IsNiveauExitAsync(createClasseDto.NiveauId))
+            {
+                return BadRequest(new {message = "Le niveau spécifié n'existe pas"});
+            }
+
             var classe = await _classeRepository.CreateAsync(createClasseDto);
             return StatusCode(201, classe?.ToClasseDto());
         }
@@ -56,6 +61,12 @@ namespace api_gestion_ecole.Controllers
             {
                 return BadRequest(new {message = "Veillez entrer une option existante"});
             }
+
+            if(!await _classeRepository.IsNiveauExitAsync(updateClasseDto.NiveauId))
+            {
+                return BadRequest(new {message = "Le niveau spécifié n'existe pas"});
+            }
+
 
             var classe = await _classeRepository.UpdateAsync(id, updateClasseDto);
             if(classe == null) return NotFound(new { message = "Classe introuvable" });

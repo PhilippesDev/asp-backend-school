@@ -34,12 +34,13 @@ namespace api_gestion_ecole.Repositories
 
         public async Task<List<Classe>> GetAllAsync()
         {
-            return await _dbContext.Classe.Include(c=>c.Option).ToListAsync();
+            return await _dbContext.Classe.Include(c=>c.Option).Include(c=>c.Niveau).ToListAsync();
         }
 
         public async Task<Classe?> GetByIdAsync(int id)
         {
-            var classe = await _dbContext.Classe.Include(c=>c.Option).FirstOrDefaultAsync(o => o.Id == id);
+            var classe = await _dbContext.Classe.Include(c=>c.Option).Include(c=>c.Niveau)
+                                            .FirstOrDefaultAsync(o => o.Id == id);
             return classe ?? null;
         }
 
@@ -47,8 +48,11 @@ namespace api_gestion_ecole.Repositories
         {
             var classe = await _dbContext.Classe.Include(c=>c.Option).FirstOrDefaultAsync(c=>c.Id == id);
             if(classe == null) return null;
+
             classe.Designation = updateClasseDto.Designation;
             classe.OptionId = updateClasseDto.OptionId;
+            classe.NiveauId = updateClasseDto.NiveauId;
+
             await _dbContext.SaveChangesAsync();
             return classe;
         }
@@ -57,6 +61,12 @@ namespace api_gestion_ecole.Repositories
         {
             var option = await _dbContext.Option.FirstOrDefaultAsync(o=>o.Id == id);
             if(option != null) return true;
+            return false;
+        }
+        public async Task<bool> IsNiveauExitAsync(int id)
+        {
+            var niveau = await _dbContext.Niveau.FirstOrDefaultAsync(n=>n.Id == id);
+            if(niveau != null) return true;
             return false;
         }
 
